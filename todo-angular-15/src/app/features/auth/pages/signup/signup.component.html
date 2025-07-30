@@ -1,0 +1,55 @@
+<form [formGroup]="signupForm" (submit)="onSubmit()"
+  class="signup__form-container">
+  <div class="signup__title-wrapper">
+    <div class="signup__title display-6">
+      Sign Up
+    </div>
+  </div>
+  <div class="signup__input-wrapper">
+    <label for="signup__username">User Name *</label>
+    <div class="input-group">
+      <span class="input-group-text" id="basic-addon1">
+        <i class="bi bi-person"></i>
+      </span>
+      <input type="text" formControlName="username" id="signup__username"
+        class="form-control"
+        [class.is-invalid]="signupForm.get('username')?.touched && signupForm.get('username')?.invalid">
+    </div>
+    <span class="danger-label"
+      *ngIf="signupForm.get('username')?.touched && signupForm.get('username')?.errors?.['required']">
+      ユーザー名は必須です
+    </span>
+  </div>
+  <div class="signup__input-wrapper">
+    <label for="signup__email">Email</label>
+    <div class="input-group">
+      <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+      <input type="email" formControlName="email" id="signup__email"
+        class="form-control ng-invalid">
+    </div>
+    <span
+      *ngIf="signupForm.get('email')?.touched && signupForm.get('email')?.errors?.['required']">
+      メールアドレスは必須です
+    </span>
+    <span
+      *ngIf="signupForm.get('email')?.touched && signupForm.get('email')?.errors?.['email']">
+      メールアドレスは必須です
+    </span>
+  </div>
+  <div class="signup__input-wrapper">
+    <label for="">Password</label>
+    <div class="input-group">
+      <span class="input-group-text"><i class="bi bi-lock"></i></span>
+      <input type="password" formControlName="password" id="signup__password"
+        class="form-control">
+    </div>
+  </div>
+  <div class="signup__input-wrapper">
+    <label for="signup__confirm-password">Confirm password</label>
+    <div class="input-group">
+      <span class="input-group-text"><i class="bi bi-lock"></i></span>
+      <input type="password" formControlName="confirmPassword"
+        id="signup__confirm-password" class="form-control">
+    </div>
+  </div>
+</form>

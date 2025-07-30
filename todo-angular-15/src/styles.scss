@@ -1,0 +1,24 @@
+/* You can add global styles to this file, and also import other style files */
+@import 'bootstrap-icons/font/bootstrap-icons';
+@import 'bootstrap/scss/bootstrap';
+
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  font-family: Roboto, 'Helvetica Neue', sans-serif;
+}
+
+.danger-label {
+  color: $danger !important;
+}
+
+input:not(.is-invalid) {
+  border-color: $gray-500 !important;
+}
+
+.input-group-text {
+  border-color: $gray-500 !important;
+}

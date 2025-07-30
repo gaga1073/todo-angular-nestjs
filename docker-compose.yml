@@ -1,0 +1,35 @@
+services:
+  front-todo-angular15-nestjs10:
+    container_name: front-todo-angular15-nestjs10
+    build:
+      context: ./
+      dockerfile: Dockerfile.front
+    ports:
+      - "4200:4200"
+    volumes:
+      - "./todo-angular-15/:/home/todo/todo-angular-15/"
+    tty: true
+
+  backend-todo-angular15-nestjs10:
+    container_name: backend-todo-angular15-nestjs10
+    build:
+      context: ./
+      dockerfile: Dockerfile.backend
+    ports:
+      - "3000:3000"
+    volumes:
+      - "./todo-nestjs-10/:/home/todo/todo-nestjs-10/"
+    tty: true
+
+  todo-angular15-nestjs10-db:
+    image: postgres:17
+    container_name: todo-angular15-nestjs10-db
+    ports:
+      - "54329:5432"
+    volumes:
+      - todo-angular15-nestjs10-store:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: "user"
+      POSTGRES_PASSWORD: "postgres"
+volumes:
+  todo-angular15-nestjs10-store:

@@ -1,0 +1,30 @@
+<form [formGroup]="loginForm" (submit)="onSubmit()"
+  class="login__form-container">
+  <div class="login__title-wrapper">
+    <div class="login__title display-6">Login</div>
+  </div>
+  <div class="login__input-wrapper">
+    <label for="login__email">Email</label>
+    <div class="input-group">
+      <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+      <input type="email" formControlName="email" id="login__email"
+        class="form-control" />
+    </div>
+  </div>
+  <div class="login__input-wrapper">
+    <label for="login__password">Password</label>
+    <div class="input-group">
+      <span class="input-group-text"><i class="bi bi-lock"></i></span>
+      <input type="password" formControlName="password" id="login__password"
+        class="form-control" />
+    </div>
+  </div>
+  <div class="login__button-wrapper">
+    <button type="submit" class="btn btn-primary">
+      送信
+    </button>
+  </div>
+  <div class="login__footer">
+    <a routerLink="/auth/sign-up">サインアップ</a>
+  </div>
+</form>

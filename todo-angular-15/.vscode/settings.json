@@ -1,0 +1,21 @@
+{
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[html]": {
+    "editor.defaultFormatter": "vscode.html-language-features"
+  },
+  "[scss]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "editor.codeActionsOnSave": ["source.addMissingImports", "source.fixAll.eslint"],
+  "editor.formatOnSave": true,
+  "html.format.enable": true,
+  "html.format.wrapAttributes": "auto",
+  "html.format.wrapLineLength": 80,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "html.format.wrapAttributesIndentSize": null
+}

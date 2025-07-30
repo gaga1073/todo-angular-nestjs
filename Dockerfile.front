@@ -1,0 +1,7 @@
+FROM node:18
+
+WORKDIR /home/todo
+
+RUN npm install -g @angular/cli@15
+
+CMD ["/bin/bash"]
