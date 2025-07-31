@@ -22,6 +22,10 @@
 
     .signup__input-wrapper {
       margin-bottom: 1.5rem;
+
+      .danger {
+        color: $danger !important;
+      }
     }
 
     .signup__button-wrapper {

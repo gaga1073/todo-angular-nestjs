@@ -15,7 +15,7 @@
         class="form-control"
         [class.is-invalid]="signupForm.get('username')?.touched && signupForm.get('username')?.invalid">
     </div>
-    <span class="danger-label"
+    <span class="danger"
       *ngIf="signupForm.get('username')?.touched && signupForm.get('username')?.errors?.['required']">
       ユーザー名は必須です
     </span>
@@ -25,31 +25,47 @@
     <div class="input-group">
       <span class="input-group-text"><i class="bi bi-envelope"></i></span>
       <input type="email" formControlName="email" id="signup__email"
-        class="form-control ng-invalid">
+        class="form-control ng-invalid"
+        [class.is-invalid]="signupForm.get('email')?.touched && signupForm.get('email')?.invalid">
     </div>
-    <span
+    <span class="danger"
       *ngIf="signupForm.get('email')?.touched && signupForm.get('email')?.errors?.['required']">
       メールアドレスは必須です
     </span>
-    <span
+    <span class="danger"
       *ngIf="signupForm.get('email')?.touched && signupForm.get('email')?.errors?.['email']">
-      メールアドレスは必須です
+      メールアドレス形式で入力してください
     </span>
   </div>
   <div class="signup__input-wrapper">
-    <label for="">Password</label>
+    <label for="signup__password">Password</label>
     <div class="input-group">
       <span class="input-group-text"><i class="bi bi-lock"></i></span>
       <input type="password" formControlName="password" id="signup__password"
-        class="form-control">
+        class="form-control"
+        [class.is-invalid]="signupForm.get('password')?.touched && signupForm.get('password')?.invalid">
     </div>
+    <span class="danger"
+      *ngIf="signupForm.get('password')?.touched && signupForm.get('password')?.errors?.['required']">
+      パスワードは必須です
+    </span>
   </div>
   <div class="signup__input-wrapper">
     <label for="signup__confirm-password">Confirm password</label>
     <div class="input-group">
       <span class="input-group-text"><i class="bi bi-lock"></i></span>
       <input type="password" formControlName="confirmPassword"
-        id="signup__confirm-password" class="form-control">
+        id="signup__confirm-password" class="form-control"
+        [class.is-invalid]="signupForm.get('confirmPassword')?.touched && signupForm.get('confirmPassword')?.invalid 
+          || signupForm.get('confirmPassword')?.touched && signupForm.errors?.['passwordMismatch']">
     </div>
+    <span class="danger"
+      *ngIf="signupForm.get('confirmPassword')?.touched && signupForm.get('confirmPassword')?.errors?.['required']">
+      パスワードは必須です
+    </span>
+    <span class="danger"
+      *ngIf="signupForm.get('confirmPassword')?.touched && signupForm?.errors?.['passwordMismatch']">
+      パスワードが一致しません
+    </span>
   </div>
 </form>

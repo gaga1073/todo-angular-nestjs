@@ -11,10 +11,6 @@ body {
   font-family: Roboto, 'Helvetica Neue', sans-serif;
 }
 
-.danger-label {
-  color: $danger !important;
-}
-
 input:not(.is-invalid) {
   border-color: $gray-500 !important;
 }

@@ -1,5 +1,5 @@
-import { Component, inject } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { Component, Inject, inject } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { AuthenticationService } from '../../services/authentication.service';
 import { catchError, EMPTY } from 'rxjs';
 import { passwordMatchValidator } from 'src/app/core/validators/passwordMatchValidator';
@@ -10,12 +10,14 @@ import { passwordMatchValidator } from 'src/app/core/validators/passwordMatchVal
   styleUrls: ['./signup.component.scss'],
 })
 export class SignupComponent {
-  signupForm = new FormGroup(
+  private formBuilder = inject(FormBuilder);
+
+  signupForm = this.formBuilder.nonNullable.group(
     {
-      username: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
-      email: new FormControl('', { nonNullable: true, validators: [Validators.email] }),
-      password: new FormControl('', { nonNullable: true, validators: [Validators.minLength(8)] }),
-      confirmPassword: new FormControl('', { nonNullable: true, validators: [Validators.minLength(8)] }),
+      username: ['', [Validators.required]],
+      email: ['', [Validators.email, Validators.required]],
+      password: ['', [Validators.minLength(2), Validators.required]],
+      confirmPassword: ['', [Validators.minLength(2), Validators.required]],
     },
     { validators: passwordMatchValidator },
   );
@@ -23,11 +25,14 @@ export class SignupComponent {
   private readonly authenticationService = inject(AuthenticationService);
 
   onSubmit(): void {
-    this.authenticationService.signup(this.signupForm.getRawValue()).pipe(
-      catchError((error) => {
-        console.error(error);
-        return EMPTY;
-      }),
-    );
+    this.authenticationService
+      .signup(this.signupForm.getRawValue())
+      .pipe(
+        catchError((error) => {
+          console.error(error);
+          return EMPTY;
+        }),
+      )
+      .subscribe();
   }
 }
