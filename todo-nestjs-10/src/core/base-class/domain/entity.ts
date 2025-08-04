@@ -1,20 +1,15 @@
 export abstract class Entity<T, U> {
   protected readonly _id: T;
-  protected readonly props: U;
+  protected props: U;
 
   constructor(id: T, props: U) {
     this._id = id;
-    this.props = Object.freeze(props);
+    this.props = props;
   }
 
   public get id(): T {
     return this._id;
   }
 
-  public toPlainObject(): unknown {
-    return {
-      id: this._id,
-      ...this.props,
-    };
-  }
+  public abstract toPlainObject(): { id: string } & unknown;
 }

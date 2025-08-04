@@ -7,6 +7,7 @@ import { SignupRequest } from '../types/signup-request.type';
 import { SignupResponse } from '../types/signup-response.type';
 import { User } from '../types/user.type';
 import { SessionStorageService } from 'src/app/core/services/session-storage.service';
+import { ACCESS_TOKEN_KEY } from 'src/app/core/constants/common';
 
 @Injectable({
   providedIn: 'root',
@@ -16,7 +17,8 @@ export class AuthenticationService {
 
   private readonly httpClient = inject(HttpClient);
   private readonly sessionStorageService = inject(SessionStorageService);
-  private readonly accessTokenSubject = new BehaviorSubject(this.sessionStorageService.getItem('ACCESS_TOKEN_KEY'));
+
+  private readonly accessTokenSubject = new BehaviorSubject(this.sessionStorageService.getItem(ACCESS_TOKEN_KEY));
 
   readonly isLogin$ = this.accessTokenSubject.asObservable().pipe(map((token) => !!token));
 
@@ -28,6 +30,7 @@ export class AuthenticationService {
       .pipe(
         map((response: SignupResponse) => {
           const { user, accessToken } = response;
+          this.sessionStorageService.setItem(ACCESS_TOKEN_KEY, accessToken);
           return user;
         }),
       );
@@ -41,6 +44,7 @@ export class AuthenticationService {
       .pipe(
         map((response: SignupResponse) => {
           const { user, accessToken } = response;
+          this.sessionStorageService.setItem(ACCESS_TOKEN_KEY, accessToken);
           return user;
         }),
       );

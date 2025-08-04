@@ -6,12 +6,15 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { User } from 'src/features/user/domain/entities/user';
+import { UserAuthorizationService } from 'src/features/user/domain/services/user-authorization.service';
 import { UserService } from 'src/features/user/services/user.service';
+import { SignupRequest } from '../dto/signup.request';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly userService: UserService,
+    private readonly userAuthorizationService: UserAuthorizationService,
     private readonly jwtService: JwtService,
   ) {}
 
@@ -25,7 +28,7 @@ export class AuthService {
     try {
       const user = await this.userService.findUserByEmailOrFail(email);
 
-      await user.comparePassword(password, user);
+      await this.userAuthorizationService.comparePassword(password, user);
 
       return user;
     } catch (error) {
@@ -34,7 +37,7 @@ export class AuthService {
     }
   }
 
-  public async signJwtAccessToken(user: User): Promise<string> {
+  public async createJwtAccessToken(user: User): Promise<string> {
     try {
       return await this.jwtService.signAsync(
         {
@@ -56,7 +59,7 @@ export class AuthService {
     }
   }
 
-  public async signJwtRefreshToken(user: User): Promise<string> {
+  public async createJwtRefreshToken(user: User): Promise<string> {
     try {
       return await this.jwtService.signAsync(
         {
@@ -78,5 +81,9 @@ export class AuthService {
       }
       throw new InternalServerErrorException('An unexpected error occurred.');
     }
+  }
+
+  public async register(signupRequest: SignupRequest): Promise<User> {
+    return await this.userService.create(signupRequest);
   }
 }

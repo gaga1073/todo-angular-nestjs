@@ -8,7 +8,7 @@ export const seedUser = async (prisma: PrismaClient): Promise<void> => {
       {
         id: '01HZYC2028WMB3NJ16WCV9Z9E0',
         email: 'user@email.com',
-        name: '岩波',
+        name: '山田',
         password: 'pass',
       },
     ],

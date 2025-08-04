@@ -1,4 +1,3 @@
-import { UnauthorizedException } from '@nestjs/common';
 import { Entity } from 'src/core/base-class/domain/entity';
 import { UserId } from '../value-objects/user-id';
 
@@ -51,27 +50,11 @@ export class User extends Entity<UserId, UserPorps> {
     return new User(id, { email, username, password });
   }
 
-  public async comparePassword(password: string, user: User): Promise<boolean> {
-    try {
-      // const match = await bcrypt.compare(password, user.password);
-      const match = password === user.password;
-
-      if (!match) {
-        throw new UnauthorizedException('Incorrect Username or Password');
-      }
-
-      return match;
-    } catch (error) {
-      throw error;
-    }
-  }
-
-  public toPlainObject(): unknown {
+  public toPlainObject(): { id: string } & Omit<UserPorps, 'password'> {
     return {
       id: this._id.toString(),
       email: this.email,
       username: this.username,
-      password: this.password,
     };
   }
 }
