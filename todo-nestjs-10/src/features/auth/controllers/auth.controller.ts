@@ -11,7 +11,7 @@ import { plainToClass, plainToInstance } from 'class-transformer';
 import { FastifyReply } from 'fastify';
 import { AuthUser } from 'src/core/decorators/auth-user.decorator';
 import { LocalAuthGuard } from 'src/core/guards/local-auth.guard';
-import { setRefreshTokenToHttpOnlyCookie } from 'src/core/utils/response';
+import { setRefreshTokenToHttpOnlyCookie } from 'src/core/utils/response.util';
 import { User } from 'src/features/user/domain/entities/user';
 import { LoginRequest } from '../dto/login.request';
 import { LoginResponse } from '../dto/login.response';
@@ -41,8 +41,6 @@ export class AuthController {
       user: user.toPlainObject(),
       accessToken,
     });
-
-    console.log(response);
 
     return response;
   }

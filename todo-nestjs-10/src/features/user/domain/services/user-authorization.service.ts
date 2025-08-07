@@ -6,8 +6,7 @@ import { User } from '../entities/user';
 export class UserAuthorizationService {
   public async comparePassword(password: string, user: User): Promise<boolean> {
     try {
-      // const match = await bcrypt.compare(password, user.password);
-      const match = password === user.password;
+      const match = await bcrypt.compare(password, user.password);
 
       if (!match) {
         throw new UnauthorizedException('Incorrect Username or Password');

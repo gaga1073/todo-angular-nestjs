@@ -1,8 +1,4 @@
-import {
-  Injectable,
-  InternalServerErrorException,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { SignupRequest } from 'src/features/auth/dto/signup.request';
 import { User } from '../domain/entities/user';
 import { UserAuthorizationService } from '../domain/services/user-authorization.service';
@@ -16,42 +12,27 @@ export class UserService {
   ) {}
 
   public async findUserByEmailOrFail(email: string): Promise<User> {
-    try {
-      const user = await this.userRepository.findOneByEmail(email);
+    const user = await this.userRepository.findOneByEmail(email);
 
-      if (user === null) {
-        throw new NotFoundException('Not Found User');
-      }
-
-      return user;
-    } catch (error) {
-      if (error instanceof NotFoundException) {
-        throw error;
-      }
-
-      console.error('Unexpected error in findUserByEmailOrFail:', error);
-      throw new InternalServerErrorException('DataBase Error');
+    if (user === null) {
+      throw new NotFoundException('Not Found User');
     }
+
+    return user;
   }
 
-  public async create(signupRequest: SignupRequest): Promise<User> {
+  public async createUser(signupRequest: SignupRequest): Promise<User> {
     const hashedPassword = await this.userAuthorizationService.hashPassword(
       signupRequest.password,
     );
+    const user = User.create({
+      email: signupRequest.email,
+      username: signupRequest.username,
+      password: hashedPassword,
+    });
 
-    try {
-      const user = User.create({
-        email: signupRequest.email,
-        username: signupRequest.username,
-        password: hashedPassword,
-      });
+    await this.userRepository.create(user);
 
-      this.userRepository.create(user);
-
-      return user;
-    } catch (error) {
-      console.log(error);
-      throw new InternalServerErrorException();
-    }
+    return user;
   }
 }

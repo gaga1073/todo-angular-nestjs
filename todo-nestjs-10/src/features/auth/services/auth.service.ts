@@ -5,6 +5,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { AppLogger } from 'src/core/utils/logger.util';
 import { User } from 'src/features/user/domain/entities/user';
 import { UserAuthorizationService } from 'src/features/user/domain/services/user-authorization.service';
 import { UserService } from 'src/features/user/services/user.service';
@@ -17,6 +18,8 @@ export class AuthService {
     private readonly userAuthorizationService: UserAuthorizationService,
     private readonly jwtService: JwtService,
   ) {}
+
+  private readonly logger = new AppLogger(AuthService.name);
 
   public async validateUser({
     email,
@@ -33,6 +36,7 @@ export class AuthService {
       return user;
     } catch (error) {
       console.error(error);
+      // this.logger.error('')
       throw new UnauthorizedException('Incorrect Username or Password');
     }
   }
@@ -42,6 +46,7 @@ export class AuthService {
       return await this.jwtService.signAsync(
         {
           sub: user.id,
+          userId: user.id.toString(),
           email: user.email,
         },
         {
@@ -84,6 +89,6 @@ export class AuthService {
   }
 
   public async register(signupRequest: SignupRequest): Promise<User> {
-    return await this.userService.create(signupRequest);
+    return await this.userService.createUser(signupRequest);
   }
 }

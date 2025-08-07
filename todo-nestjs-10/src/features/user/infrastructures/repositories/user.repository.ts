@@ -1,13 +1,21 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import { Injectable } from '@nestjs/common';
+import { PinoLogger } from 'nestjs-pino';
 import { PrismaProvider } from 'src/core/providers/prisma/prisma.provider';
+import { AppLogger } from 'src/core/utils/logger.util';
 import { User } from '../../domain/entities/user';
 import { UserId } from '../../domain/value-objects/user-id';
 import { handlePrismaError } from '../exception/prismaException';
 
 @Injectable()
 export class UserRepository {
-  constructor(private readonly prisma: PrismaProvider) {}
+  private readonly logger: AppLogger;
+
+  constructor(
+    private readonly prisma: PrismaProvider,
+    private readonly pinologger: PinoLogger,
+  ) {
+    this.logger = new AppLogger(UserRepository.name);
+  }
 
   public async findOneByEmail(email: string): Promise<User | null> {
     try {
@@ -30,11 +38,10 @@ export class UserRepository {
 
       return user;
     } catch (error) {
-      if (error instanceof PrismaClientKnownRequestError) {
-        handlePrismaError(error);
+      if (error instanceof Error) {
+        this.logger.error('DataBase Error occured', error);
       }
-      console.error(`DataBase Error: ${error}`);
-      throw new InternalServerErrorException('DataBase Error');
+      return handlePrismaError(error);
     }
   }
 
@@ -49,10 +56,10 @@ export class UserRepository {
         },
       });
     } catch (error) {
-      if (error instanceof PrismaClientKnownRequestError) {
-        handlePrismaError(error);
+      if (error instanceof Error) {
+        this.logger.error('DataBase Error occured', error);
       }
-      throw new InternalServerErrorException();
+      handlePrismaError(error);
     }
   }
 }

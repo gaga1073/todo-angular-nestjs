@@ -1,22 +1,43 @@
+import { IncomingMessage } from 'http';
 import fastifyCookie from '@fastify/cookie';
-import { NestFactory } from '@nestjs/core';
+import { Logger as defaultLogger } from '@nestjs/common';
+import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 import {
   FastifyAdapter,
   NestFastifyApplication,
 } from '@nestjs/platform-fastify';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { Logger, LoggerErrorInterceptor } from 'nestjs-pino';
+import { ulid } from 'ulid';
 import { AppModule } from './app.module';
+import { ExceptionsFilter } from './core/filters/exceptions.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(
     AppModule,
-    new FastifyAdapter(),
+    new FastifyAdapter({
+      genReqId: (req: IncomingMessage) => {
+        const existingId = req.headers['x-request-id'] as string | undefined;
+        if (existingId) return existingId;
+        const id = ulid();
+        return id;
+      },
+    }),
   );
 
   app.setGlobalPrefix('api');
   app.enableCors({
     origin: '*',
   });
+
+  new defaultLogger().log(`access port: ${process.env.PORT ?? 3000}`);
+
+  app.useLogger(app.get(Logger));
+
+  const { httpAdapter } = app.get(HttpAdapterHost);
+  app.useGlobalFilters(new ExceptionsFilter(httpAdapter));
+
+  app.useGlobalInterceptors(new LoggerErrorInterceptor());
 
   const config = new DocumentBuilder()
     .setTitle('Cats example')
@@ -30,6 +51,5 @@ async function bootstrap() {
   await app.register(fastifyCookie, { secret: 'MY_SUPER_SECRET_COOKIE' });
 
   await app.listen(process.env.PORT ?? 3000, '0.0.0.0');
-  console.info(`access port: ${process.env.PORT ?? 3000}`);
 }
 bootstrap();
