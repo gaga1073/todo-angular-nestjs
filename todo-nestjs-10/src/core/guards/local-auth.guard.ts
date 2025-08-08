@@ -6,12 +6,15 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { plainToInstance } from 'class-transformer';
-import { validateOrReject } from 'class-validator';
+import { validateOrReject, ValidationError } from 'class-validator';
 import { FastifyRequest } from 'fastify';
 import { firstValueFrom, isObservable } from 'rxjs';
 import { LoginRequest } from 'src/features/auth/dto/login.request';
+import { AppLogger } from '../utils/logger.util';
 @Injectable()
 export class LocalAuthGuard extends AuthGuard('local') {
+  logger = new AppLogger(LocalAuthGuard.name);
+
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest<FastifyRequest>();
 
@@ -20,18 +23,31 @@ export class LocalAuthGuard extends AuthGuard('local') {
     try {
       await validateOrReject(loginRequest);
     } catch (error) {
-      if (Array.isArray(error)) {
-        throw new BadRequestException(
-          error.flatMap((eachError) => Object.values(eachError.constraints)),
+      if (
+        Array.isArray(error) &&
+        error.every((e) => e instanceof ValidationError)
+      ) {
+        const messages = error.flatMap((eachError) =>
+          Object.values(eachError.constraints ? eachError.constraints : ''),
         );
+
+        const validationError = new Error(messages.join(', '));
+
+        this.logger.error('Validation error occurred.', validationError, {
+          method: this.canActivate.name,
+        });
+        throw new BadRequestException('Validation error occurred.');
       }
+      this.logger.error('An unexpected error occurred.', error, {
+        method: this.canActivate.name,
+      });
       throw new InternalServerErrorException('An unexpected error occurred.');
     }
 
     const result = await super.canActivate(context);
 
-    if (result instanceof Promise) {
-      return await result;
+    if (typeof result === 'boolean') {
+      return result;
     }
     if (isObservable(result)) {
       return await firstValueFrom(result);

@@ -17,7 +17,7 @@ export class UserDto {
 }
 
 @Exclude()
-export class LoginResponse {
+export class AuthResponse {
   @Type(() => UserDto)
   @Expose()
   @ApiProperty({ type: UserDto })

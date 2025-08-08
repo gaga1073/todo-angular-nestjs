@@ -21,6 +21,10 @@ export class UserService {
     return user;
   }
 
+  public async findUserById(id: string): Promise<User | null> {
+    return await this.userRepository.findOneById(id);
+  }
+
   public async createUser(signupRequest: SignupRequest): Promise<User> {
     const hashedPassword = await this.userAuthorizationService.hashPassword(
       signupRequest.password,

@@ -45,12 +45,12 @@ export class AuthService {
     try {
       return await this.jwtService.signAsync(
         {
-          sub: user.id,
-          userId: user.id.toString(),
+          sub: user.id.toString(),
+          id: user.id.toString(),
           email: user.email,
         },
         {
-          expiresIn: '60s', //有効期限
+          expiresIn: '120s', //有効期限
           algorithm: 'HS512', // 暗号化方式
           issuer: 'Nest Advance JWT Authentication', // 発行者(iss)
           audience: 'Authenicated Users', // 受信者(aud)
@@ -68,7 +68,7 @@ export class AuthService {
     try {
       return await this.jwtService.signAsync(
         {
-          id: user.id,
+          id: user.id.toString(),
           sub: user.username,
         },
         {

@@ -14,7 +14,7 @@ export class AppLogger {
     });
   }
 
-  error(message: string, error: Error, context?: { method: string }): void {
+  error(message: string, error: unknown, context?: { method: string }): void {
     this.logger.error({
       msg: message,
       err: error,
