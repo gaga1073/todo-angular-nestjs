@@ -1,10 +1,10 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
-import { firstValueFrom } from 'rxjs';
 import { AuthenticationService } from 'src/app/features/auth/services/authentication.service';
-import { AUTHENTICATION_URLs } from '../constants/path.constant';
+import { TODO_URLs } from '../constants/path.constant';
+import { firstValueFrom } from 'rxjs';
 
-export const authenticationGuard: CanActivateFn = async () => {
+export const noAuthenticationGuard: CanActivateFn = async () => {
   const authenticationService = inject(AuthenticationService);
 
   const router = inject(Router);
@@ -12,9 +12,10 @@ export const authenticationGuard: CanActivateFn = async () => {
   const isLogin = await firstValueFrom(authenticationService.isLogin$);
 
   if (isLogin) {
-    return true;
+    router.navigateByUrl(TODO_URLs.home);
+    return false;
   }
 
-  await router.navigate([AUTHENTICATION_URLs.login]);
-  return false;
+  // await router.navigate([AUTHENTICATION_URLs.login]);
+  return true;
 };

@@ -8,20 +8,30 @@
     <div class="input-group">
       <span class="input-group-text"><i class="bi bi-envelope"></i></span>
       <input type="email" formControlName="email" id="login__email"
-        class="form-control" />
+        class="form-control"
+        [class.is-invalid]="loginForm.get('email')?.touched && loginForm.get('email')?.errors?.['required']" />
     </div>
+    <span class="danger"
+      *ngIf="loginForm.get('email')?.touched && loginForm.get('email')?.errors?.['required']">
+      メールアドレスは必須です
+    </span>
   </div>
   <div class="login__input-wrapper">
     <label for="login__password">Password</label>
     <div class="input-group">
       <span class="input-group-text"><i class="bi bi-lock"></i></span>
       <input type="password" formControlName="password" id="login__password"
-        class="form-control" />
+        class="form-control"
+        [class.is-invalid]="loginForm.get('password')?.touched && loginForm.get('password')?.errors?.['required']" />
     </div>
+    <span class="danger"
+      *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.errors?.['required']">
+      パスワードは必須です
+    </span>
   </div>
   <div class="login__button-wrapper">
     <button type="submit" class="btn btn-primary">
-      送信
+      ログイン
     </button>
   </div>
   <div class="login__footer">

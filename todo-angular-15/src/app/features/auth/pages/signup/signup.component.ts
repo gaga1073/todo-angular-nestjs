@@ -1,8 +1,9 @@
-import { Component, Inject, inject } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { Component, inject } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
 import { AuthenticationService } from '../../services/authentication.service';
-import { catchError, EMPTY } from 'rxjs';
 import { passwordMatchValidator } from 'src/app/core/validators/passwordMatchValidator';
+import { Router } from '@angular/router';
+import { AUTHENTICATION_URLs } from 'src/app/core/constants/path.constant';
 
 @Component({
   selector: 'app-signup',
@@ -11,6 +12,9 @@ import { passwordMatchValidator } from 'src/app/core/validators/passwordMatchVal
 })
 export class SignupComponent {
   private formBuilder = inject(FormBuilder);
+  private router = inject(Router);
+
+  isSignupFialure = false;
 
   signupForm = this.formBuilder.nonNullable.group(
     {
@@ -25,14 +29,23 @@ export class SignupComponent {
   private readonly authenticationService = inject(AuthenticationService);
 
   onSubmit(): void {
-    this.authenticationService
-      .signup(this.signupForm.getRawValue())
-      .pipe(
-        catchError((error) => {
-          console.error(error);
-          return EMPTY;
-        }),
-      )
-      .subscribe();
+    if (this.signupForm.invalid) {
+      this.signupForm.markAllAsTouched();
+      return;
+    }
+
+    this.authenticationService.signup(this.signupForm.getRawValue()).subscribe({
+      next: () => {
+        this.router.navigateByUrl(AUTHENTICATION_URLs.login);
+      },
+      error: () => {
+        this.isSignupFialure = true;
+        alert('ユーザーの作成に失敗しました。');
+      },
+    });
+  }
+
+  onClickReturn(): void {
+    this.router.navigateByUrl(AUTHENTICATION_URLs.login);
   }
 }

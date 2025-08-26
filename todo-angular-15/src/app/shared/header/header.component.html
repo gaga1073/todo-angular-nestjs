@@ -1,1 +1,19 @@
-<p>header works!</p>
+<header class="shadow-sm">
+  <div class="container">
+    <!-- <div class="d-flex flex-wrap align-items-center justify-content-start"> -->
+    <div class="header__content">
+      <a href="/">
+        <img src="assets/todo_logo_outline.svg" alt="" height="40px">
+      </a>
+      <ul class="header__nav-ul nav" *ngIf="isLogin">
+        <li><a href="#" class="nav-link text-secondary">Home</a></li>
+      </ul>
+      <div class="text-end" *ngIf="isLogin">
+        <button type="button" class="btn btn-outline-primary me-2"
+          (click)="logOut()">
+          Log out
+        </button>
+      </div>
+    </div>
+  </div>
+</header>

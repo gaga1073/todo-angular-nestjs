@@ -20,4 +20,12 @@ export class SessionStorageService {
       console.log(error);
     }
   }
+
+  removeItem(key: string) {
+    try {
+      sessionStorage.removeItem(key);
+    } catch (error) {
+      console.log(error);
+    }
+  }
 }

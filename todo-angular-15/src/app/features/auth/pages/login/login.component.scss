@@ -8,6 +8,7 @@
   .login__form-container {
     padding: 2rem 3rem;
     border: 1px solid $gray-400;
+    background-color: $white;
 
     .login__title-wrapper {
       display: flex;
@@ -20,14 +21,25 @@
       }
     }
 
+    .login__filure-message {
+      margin-bottom: 2rem;
+      color: $danger;
+      text-align: center;
+    }
+
     .login__input-wrapper {
       margin-bottom: 1.5rem;
+
+      .danger {
+        color: $danger !important;
+      }
     }
 
     .login__button-wrapper {
       display: flex;
       align-items: center;
       justify-content: center;
+      margin-top: 2.5rem;
     }
 
     .login__footer {

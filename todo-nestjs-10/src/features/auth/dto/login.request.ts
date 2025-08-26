@@ -10,7 +10,7 @@ export class LoginRequest {
 
   @IsNotEmpty()
   @IsString()
-  @MinLength(5)
+  @MinLength(4)
   @ApiProperty({ example: 'pass' })
   password!: string;
 }

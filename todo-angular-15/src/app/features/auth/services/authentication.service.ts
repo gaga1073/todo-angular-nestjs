@@ -8,6 +8,9 @@ import { SignupResponse } from '../types/signup-response.type';
 import { User } from '../types/user.type';
 import { SessionStorageService } from 'src/app/core/services/session-storage.service';
 import { ACCESS_TOKEN_KEY } from 'src/app/core/constants/common';
+import { LoginResponse } from 'src/app/core/types/login-response.type';
+import { Router } from '@angular/router';
+import { AUTHENTICATION_URLs } from 'src/app/core/constants/path.constant';
 
 @Injectable({
   providedIn: 'root',
@@ -16,6 +19,7 @@ export class AuthenticationService {
   private readonly endpoint = getEndpoints();
 
   private readonly httpClient = inject(HttpClient);
+  private readonly router = inject(Router);
   private readonly sessionStorageService = inject(SessionStorageService);
 
   private readonly accessTokenSubject = new BehaviorSubject(this.sessionStorageService.getItem(ACCESS_TOKEN_KEY));
@@ -24,13 +28,14 @@ export class AuthenticationService {
 
   login(loginRequest: LoginRequest): Observable<User> {
     return this.httpClient
-      .post<SignupResponse>(this.endpoint.auth.login, {
+      .post<LoginResponse>(this.endpoint.auth.login, {
         ...loginRequest,
       })
       .pipe(
-        map((response: SignupResponse) => {
+        map((response: LoginResponse) => {
           const { user, accessToken } = response;
           this.sessionStorageService.setItem(ACCESS_TOKEN_KEY, accessToken);
+          this.accessTokenSubject.next(accessToken);
           return user;
         }),
       );
@@ -48,5 +53,11 @@ export class AuthenticationService {
           return user;
         }),
       );
+  }
+
+  logOut() {
+    this.sessionStorageService.removeItem(ACCESS_TOKEN_KEY);
+    this.accessTokenSubject.next(null);
+    this.router.navigateByUrl(AUTHENTICATION_URLs.login);
   }
 }

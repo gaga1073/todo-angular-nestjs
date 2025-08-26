@@ -5,7 +5,7 @@ module.exports = {
     tsconfigRootDir: __dirname,
     sourceType: 'module',
   },
-  plugins: ['@typescript-eslint/eslint-plugin', '@angular-eslint', '@angular-eslint/template'],
+  plugins: ['@typescript-eslint/eslint-plugin', '@angular-eslint', '@angular-eslint/template', 'unused-imports'],
   extends: [
     'prettier',
     'plugin:@typescript-eslint/recommended',
@@ -22,6 +22,8 @@ module.exports = {
   ignorePatterns: ['.eslintrc.js'],
   rules: {
     'no-console': ['warn', { allow: ['info', 'error', 'warn'] }],
+    'unused-imports/no-unused-imports': 'warn',
+    '@typescript-eslint/no-unused-vars': 'off',
   },
   overrides: [
     {

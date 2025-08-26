@@ -1,0 +1,6 @@
+<div *ngIf="alert">
+  <alert class="toast__alert" [type]="alert.type" (onClose)="onClosed()"
+    [dismissible]="dismissible">
+    {{ alert.msg }}
+  </alert>
+</div>
