@@ -6,10 +6,14 @@ module.exports = {
     sourceType: 'module',
   },
   plugins: ['@typescript-eslint/eslint-plugin', 'import', 'unused-imports'],
-  extends: [
-    'plugin:@typescript-eslint/recommended',
-    'plugin:prettier/recommended',
-  ],
+  extends: ['plugin:@typescript-eslint/recommended', 'plugin:prettier/recommended'],
+  settings: {
+    'import/resolver': {
+      typescript: {
+        project: './tsconfig.json',
+      },
+    },
+  },
   root: true,
   env: {
     node: true,
@@ -26,22 +30,30 @@ module.exports = {
     '@typescript-eslint/no-unsafe-call': 'error',
     '@typescript-eslint/no-unsafe-argument': 'error',
 
+    '@typescript-eslint/no-unused-vars': [
+      'error',
+      { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
+    ],
+
     'no-console': ['warn', { allow: ['info', 'error', 'warn'] }],
 
     'unused-imports/no-unused-imports': 'error',
 
+    'no-restricted-imports': [
+      'error',
+      {
+        patterns: [
+          'src/*', // src直書き禁止
+          './*', // 相対禁止
+          '../*', // 相対禁止
+        ],
+      },
+    ],
+
     'import/order': [
       'error',
       {
-        groups: [
-          'builtin',
-          'external',
-          'sibling',
-          'parent',
-          'object',
-          'type',
-          'index',
-        ],
+        groups: ['builtin', 'external', 'sibling', 'parent', 'object', 'type', 'index'],
         alphabetize: { order: 'asc', caseInsensitive: false },
         'newlines-between': 'never',
         pathGroups: [

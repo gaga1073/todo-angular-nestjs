@@ -1,10 +1,12 @@
-import { TODO_PATHS } from 'src/app/core/constants/path.constant';
-import { HomeComponent } from './pages/home/home.component';
-import { RouterModule, Routes } from '@angular/router';
+import { TODO_PATHS } from '@/core/constants/path.constant';
+import { authenticationGuard } from '@/core/guards/authentication.guard';
 import { NgModule } from '@angular/core';
-import { authenticationGuard } from 'src/app/core/guards/authentication.guard';
+import { Routes, RouterModule } from '@angular/router';
+import { HomeComponent } from './pages/home/home.component';
 
-const routes: Routes = [{ path: TODO_PATHS.home, component: HomeComponent, canActivate: [authenticationGuard] }];
+const routes: Routes = [
+  { path: TODO_PATHS.home, component: HomeComponent, canActivate: [authenticationGuard] },
+];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],

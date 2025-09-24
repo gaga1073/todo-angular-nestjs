@@ -13,7 +13,7 @@ export class UserDto {
 
   @Expose()
   @ApiProperty({ example: '山田' })
-  readonly username!: string;
+  readonly name!: string;
 }
 
 @Exclude()

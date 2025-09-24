@@ -8,15 +8,144 @@ generator client {
   provider = "prisma-client-js"
 }
 
+generator markdown {
+  provider = "prisma-markdown"
+  output   = "./ERD.md"
+  title    = "ER図"
+}
+
 datasource db {
   provider  = "postgresql"
   url       = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
 }
 
-model User {
-  id       String  @id 
-  email    String @unique
-  name     String
-  password String
+/// @namespace TODO
+model UserModel {
+  /// ユーザーID *(CHAR(26), NOT NULL)*
+  id       String   @id @db.Char(26)
+  /// ユーザー名 *(VARCHAR(30), NOT NULL)*
+  name     String   @db.VarChar(30)
+  /// メールアドレス *(VARCHAR(50), NOT NULL)*
+  email    String   @unique @db.VarChar(50)
+  /// ユーザー管理権限 *(ENUM{amdin, member}), NOT NULL)*
+  role     UserRole
+  /// 削除フラグ *(論理削除フラグ)*
+  isDelete Boolean  @map("is_delete")
+  /// パスワード *(VARCHAR(30), NOT NULL)*
+  password String   @db.VarChar(60)
+  /// 作成日 *(TIMESTAMP WITH TIME ZONE, NOT NULL)*
+  createAt DateTime @map("create_at") @db.Timestamptz()
+  /// 更新日 *(TIMESTAMP WITH TIME ZONE)*
+  updateAt DateTime @map("update_at") @db.Timestamptz()
+
+  groups Membership[]
+
+  @@map("users")
+}
+
+enum UserRole {
+  admin
+  member
+}
+
+/// @namespace TODO
+model GroupModel {
+  /// グループID *(CHAR(26))*
+  id          String   @id @db.Char(26)
+  /// グループ名 *(グループ名)*
+  name        String   @unique
+  /// グループの説明 *(TEXT)*
+  description String   @db.Text()
+  /// 作成日 *(TIMESTAMP WITH TIME ZONE, NOT NULL)*
+  createAt    DateTime @map("create_at") @db.Timestamptz()
+  /// 更新日 *(TIMESTAMP WITH TIME ZONE)*
+  updateAt    DateTime @map("update_at") @db.Timestamptz()
+
+  users      Membership[]
+  workspaces WorkspaceModel[]
+
+  @@map("groups")
+}
+
+enum MembershipRole {
+  owner
+  admin
+  member
+}
+
+/// @namespace TODO
+model Membership {
+  user     UserModel      @relation(fields: [userId], references: [id])
+  /// ユーザーID *(CHAR(26))*
+  userId   String         @map("user_id")
+  group    GroupModel     @relation(fields: [groupId], references: [id])
+  /// グループID *(CHAR(26))*
+  groupId  String         @map("group_id")
+  /// ワークスペース権限 *(enum{admin, member})*
+  role     MembershipRole
+  /// 作成日 *(TIMESTAMP WITH TIME ZONE, NOT NULL)*
+  createAt DateTime       @map("create_at") @db.Timestamptz()
+  /// 更新日 *(TIMESTAMP WITH TIME ZONE)*
+  updateAt DateTime       @map("update_at") @db.Timestamptz()
+
+  @@id([userId, groupId])
+  @@map("memberships")
+}
+
+/// @namespace TODO
+model WorkspaceModel {
+  /// ワークスペースID *(CHAR(26))*
+  id          String   @id @db.VarChar(26)
+  /// ワークスペース名 *(VARCHAR(30))*
+  name        String   @db.VarChar(30)
+  /// ワークスペースの説明 *(TEXT)*
+  description String   @db.Text()
+  /// グループID *(CHAR(26))*
+  groupId     String?   @map("group_id") @db.Char(26)
+  /// 所有者のユーザーID *(CHAR(26))*  
+  ownerId     String   @map("owner_id") @db.Char(26)
+  /// 作成日 *(TIMESTAMP WITH TIME ZONE, NOT NULL)*
+  createAt    DateTime @map("create_at") @db.Timestamptz()
+  /// 更新日 *(TIMESTAMP WITH TIME ZONE)*
+  updateAt    DateTime @map("update_at") @db.Timestamptz()
+
+  group GroupModel?  @relation(fields: [groupId], references: [id])
+  todo  TodoModel[]
+
+  @@map("workspaces")
+}
+
+enum Status {
+  NotStarted
+  InProgress
+  Completed
+}
+
+/// @namespace TODO
+model TodoModel {
+  /// TODO ID *(CHAR(26))*
+  id          String   @id @db.VarChar(26)
+  /// TODOタイトル *(VARCHAR(30))*
+  title       String   @db.VarChar(30)
+  /// ワークスペースID *(CHAR(26))*
+  workspaceId String   @map("workspace_id") @db.Char(26)
+  /// TODOの説明 *(TEXT)*
+  description String   @db.Text()
+  /// ステータス *(enum{NotStarted, InProgress, Completed})*
+  status      Status
+  /// 完了期限日 *(CHAR(26))*
+  dueDate     DateTime @map("due_date") @db.Timestamptz()
+  /// 担当者のユーザーID *(CHAR(26))*
+  assigneeId  String   @map("assignee_id") @db.Char(26)
+  /// 作成者のユーザーID *(CHAR(26))*
+  createBy    String   @map("create_by") @db.Char(26)
+  /// 作成日 *(TIMESTAMP WITH TIME ZONE, NOT NULL)*
+  createAt    DateTime @map("create_at") @db.Timestamptz()
+  /// 更新日 *(TIMESTAMP WITH TIME ZONE)*
+  updateAt    DateTime @map("update_at") @db.Timestamptz()
+
+  workspace WorkspaceModel @relation(fields: [workspaceId], references: [id])
+
+  @@map("todos")
 }

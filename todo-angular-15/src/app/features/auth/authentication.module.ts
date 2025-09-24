@@ -4,10 +4,17 @@ import { AuthenticationRoutingModule } from './authentication-routing.module';
 import { LoginComponent } from './pages/login/login.component';
 import { SignupComponent } from './pages/signup/signup.component';
 import { ReactiveFormsModule } from '@angular/forms';
-import { SharedModule } from 'src/app/shared/shared.module';
+import { SharedModule } from '@/shared/shared.module';
+import { ModalModule } from 'ngx-bootstrap/modal';
 
 @NgModule({
   declarations: [LoginComponent, SignupComponent],
-  imports: [CommonModule, SharedModule, AuthenticationRoutingModule, ReactiveFormsModule],
+  imports: [
+    CommonModule,
+    SharedModule,
+    AuthenticationRoutingModule,
+    ReactiveFormsModule,
+    ModalModule,
+  ],
 })
 export class AuthenticationModule {}

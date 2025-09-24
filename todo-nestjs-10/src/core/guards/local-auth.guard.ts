@@ -9,11 +9,17 @@ import { plainToInstance } from 'class-transformer';
 import { validateOrReject, ValidationError } from 'class-validator';
 import { FastifyRequest } from 'fastify';
 import { firstValueFrom, isObservable } from 'rxjs';
-import { LoginRequest } from 'src/features/auth/dto/login.request';
-import { AppLogger } from '../utils/logger.util';
+import { LoginRequest } from '@/auth/dto/login.request';
+import { AppLoggerFactory } from '@/core/providers/app-logger.factory';
+import { AppLogger } from '@/core/utils/app-logger.util';
+
 @Injectable()
 export class LocalAuthGuard extends AuthGuard('local') {
-  logger = new AppLogger(LocalAuthGuard.name);
+  private readonly logger: AppLogger;
+  constructor(private readonly appLoggerFactory: AppLoggerFactory) {
+    super();
+    this.logger = this.appLoggerFactory.create(LocalAuthGuard.name);
+  }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest<FastifyRequest>();
@@ -23,10 +29,7 @@ export class LocalAuthGuard extends AuthGuard('local') {
     try {
       await validateOrReject(loginRequest);
     } catch (error) {
-      if (
-        Array.isArray(error) &&
-        error.every((e) => e instanceof ValidationError)
-      ) {
+      if (Array.isArray(error) && error.every((e) => e instanceof ValidationError)) {
         const messages = error.flatMap((eachError) =>
           Object.values(eachError.constraints ? eachError.constraints : ''),
         );

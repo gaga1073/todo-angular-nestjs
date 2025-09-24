@@ -1,0 +1,10 @@
+default: 'table=pascal; mapTable=snake,plural; field=pascal; mapField=snake; enum=pascal; mapEnum=pascal'
+override:
+  UserModel:
+    default: 'mapTable=!users'
+  GroupModel:
+    default: 'mapTable=!groups'
+  WorkspaceModel:
+    default: 'mapTable=!workspaces'
+  TodoModel:
+    default: 'mapTable=!todos'

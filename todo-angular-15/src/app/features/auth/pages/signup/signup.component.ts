@@ -1,9 +1,13 @@
+import { AUTHENTICATION_URLs } from '@/core/constants/path.constant';
+import { passwordMatchValidator } from '@/core/validators/passwordMatchValidator';
+import { ModalComponent } from '@/shared/modal/modal.component';
+import { ToastService } from '@/shared/toast/toast.service';
 import { Component, inject } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { AuthenticationService } from '../../services/authentication.service';
-import { passwordMatchValidator } from 'src/app/core/validators/passwordMatchValidator';
 import { Router } from '@angular/router';
-import { AUTHENTICATION_URLs } from 'src/app/core/constants/path.constant';
+import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
+import { AuthenticationService } from '@/features/auth/services/authentication.service';
+import { LoadingService } from '@/shared/loading/loading.service';
 
 @Component({
   selector: 'app-signup',
@@ -13,8 +17,14 @@ import { AUTHENTICATION_URLs } from 'src/app/core/constants/path.constant';
 export class SignupComponent {
   private formBuilder = inject(FormBuilder);
   private router = inject(Router);
+  private readonly toastService = inject(ToastService);
+  private readonly bsModalService = inject(BsModalService);
+
+  private readonly loadingService = inject(LoadingService);
 
   isSignupFialure = false;
+
+  bsModalRef?: BsModalRef;
 
   signupForm = this.formBuilder.nonNullable.group(
     {
@@ -29,18 +39,26 @@ export class SignupComponent {
   private readonly authenticationService = inject(AuthenticationService);
 
   onSubmit(): void {
+    this.loadingService.show();
+
     if (this.signupForm.invalid) {
       this.signupForm.markAllAsTouched();
+      this.loadingService.hide();
       return;
     }
 
     this.authenticationService.signup(this.signupForm.getRawValue()).subscribe({
       next: () => {
+        this.bsModalRef = this.bsModalService.show(ModalComponent, {
+          class: 'modal-dialog-centered',
+        });
+        this.loadingService.hide();
         this.router.navigateByUrl(AUTHENTICATION_URLs.login);
       },
       error: () => {
+        this.loadingService.hide();
         this.isSignupFialure = true;
-        alert('ユーザーの作成に失敗しました。');
+        this.toastService.show('danger', 'サインアップに失敗しました。');
       },
     });
   }

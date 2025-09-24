@@ -1,20 +1,28 @@
-import { Controller, Get, Req, UseGuards } from '@nestjs/common';
+import { Controller, Get, Req } from '@nestjs/common';
 import { FastifyRequest } from 'fastify';
 import { AppService } from './app.service';
-import { JwtAuthGuard } from './core/guards/jwt-auth.guard';
-import { AppLogger } from './core/utils/logger.util';
+import { AppLoggerFactory } from './core/providers/app-logger.factory';
+import { AppLogger } from './core/utils/app-logger.util';
 
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService) {}
+  private appLogger: AppLogger;
+  constructor(
+    private readonly appService: AppService,
+    private readonly appLoggerFactory: AppLoggerFactory,
+  ) {
+    this.appLogger = this.appLoggerFactory.create(AppController.name);
+  }
 
-  logger = new AppLogger(AppController.name);
+  // logger = new AppLogger(AppController.name);
+  // logger = new AppLogger(AppController.name);
 
   @Get('/')
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   async hello(@Req() req: FastifyRequest): Promise<string> {
     console.info((req as FastifyRequest & { user: string })?.user);
-    this.logger.info('ロガー');
+    this.appLogger.info('ロガー');
+
     return 'Hello';
   }
 }

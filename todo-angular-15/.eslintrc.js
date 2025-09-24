@@ -5,7 +5,12 @@ module.exports = {
     tsconfigRootDir: __dirname,
     sourceType: 'module',
   },
-  plugins: ['@typescript-eslint/eslint-plugin', '@angular-eslint', '@angular-eslint/template', 'unused-imports'],
+  plugins: [
+    '@typescript-eslint/eslint-plugin',
+    '@angular-eslint',
+    '@angular-eslint/template',
+    'unused-imports',
+  ],
   extends: [
     'prettier',
     'plugin:@typescript-eslint/recommended',
@@ -24,6 +29,16 @@ module.exports = {
     'no-console': ['warn', { allow: ['info', 'error', 'warn'] }],
     'unused-imports/no-unused-imports': 'warn',
     '@typescript-eslint/no-unused-vars': 'off',
+
+    'no-restricted-imports': [
+      'error',
+      {
+        patterns: [
+          'src/*', // src直書き禁止
+          '../*', // 相対禁止
+        ],
+      },
+    ],
   },
   overrides: [
     {

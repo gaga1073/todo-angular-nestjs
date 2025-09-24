@@ -3,5 +3,5 @@ export const jwtToken = {
 };
 
 export const path = {
-  BASE_URL: '',
+  BASE_URL: 'http://localhost:3000/',
 };

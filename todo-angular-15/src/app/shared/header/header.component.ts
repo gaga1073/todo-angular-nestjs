@@ -1,5 +1,6 @@
+import { AuthenticationService } from '@/features/auth/services/authentication.service';
 import { Component, inject, OnInit } from '@angular/core';
-import { AuthenticationService } from 'src/app/features/auth/services/authentication.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-header',
@@ -8,6 +9,8 @@ import { AuthenticationService } from 'src/app/features/auth/services/authentica
 })
 export class HeaderComponent implements OnInit {
   readonly authenticationService = inject(AuthenticationService);
+
+  private readonly router = inject(Router);
 
   isLogin = false;
 
@@ -18,6 +21,6 @@ export class HeaderComponent implements OnInit {
   }
 
   logOut() {
-    this.authenticationService.logOut();
+    this.authenticationService.logOut().subscribe();
   }
 }

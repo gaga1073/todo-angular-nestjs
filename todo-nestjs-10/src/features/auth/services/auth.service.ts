@@ -1,25 +1,32 @@
 import {
   Injectable,
-  InternalServerErrorException,
-  ServiceUnavailableException,
   UnauthorizedException,
+  ServiceUnavailableException,
+  InternalServerErrorException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { AppLogger } from 'src/core/utils/logger.util';
-import { User } from 'src/features/user/domain/entities/user';
-import { UserAuthorizationService } from 'src/features/user/domain/services/user-authorization.service';
-import { UserService } from 'src/features/user/services/user.service';
-import { SignupRequest } from '../dto/signup.request';
+import { UserModel } from '@prisma/client';
+import { UserDto } from '@/auth/dto/login.response';
+import { SignupRequest } from '@/auth/dto/signup.request';
+import { AppLoggerFactory } from '@/core/providers/app-logger.factory';
+import { PrismaProvider } from '@/core/providers/prisma.provider';
+import { AppLogger } from '@/core/utils/app-logger.util';
+import { UserDomainService } from '@/user-management/domain/services/user-domain.service';
+import { UserCommandService } from '@/user-management/services/user-command.service';
 
 @Injectable()
 export class AuthService {
-  constructor(
-    private readonly userService: UserService,
-    private readonly userAuthorizationService: UserAuthorizationService,
-    private readonly jwtService: JwtService,
-  ) {}
+  private readonly appLogger: AppLogger;
 
-  private readonly logger = new AppLogger(AuthService.name);
+  constructor(
+    private readonly UserDomainService: UserDomainService,
+    private readonly jwtService: JwtService,
+    private readonly appLoggerFactory: AppLoggerFactory,
+    private readonly prisma: PrismaProvider,
+    private readonly userCommandService: UserCommandService,
+  ) {
+    this.appLogger = this.appLoggerFactory.create(AuthService.name);
+  }
 
   public async validateUser({
     email,
@@ -27,31 +34,35 @@ export class AuthService {
   }: {
     email: string;
     password: string;
-  }): Promise<User> {
+  }): Promise<UserModel> {
     try {
-      const user = await this.userService.findUserByEmailOrFail(email);
+      const user = await this.prisma.userModel.findFirstOrThrow({
+        where: {
+          email: email,
+          isDelete: false,
+        },
+      });
 
-      await this.userAuthorizationService.comparePassword(password, user);
+      await this.UserDomainService.comparePassword(password, user.password);
 
       return user;
     } catch (error) {
-      console.error(error);
-      // this.logger.error('')
+      this.appLogger.error('validate error occurd', error, { method: this.validateUser.name });
       throw new UnauthorizedException('Incorrect Username or Password');
     }
   }
 
-  public async createJwtAccessToken(user: User): Promise<string> {
+  public async createJwtAccessToken(user: UserDto): Promise<string> {
     try {
       return await this.jwtService.signAsync(
         {
-          sub: user.id.toString(),
-          id: user.id.toString(),
+          sub: user.id,
+          id: user.id,
           email: user.email,
         },
         {
-          expiresIn: '120s', //有効期限
-          algorithm: 'HS512', // 暗号化方式
+          expiresIn: '1h', //有効期限
+          algorithm: 'HS256', // 暗号化方式
           issuer: 'Nest Advance JWT Authentication', // 発行者(iss)
           audience: 'Authenicated Users', // 受信者(aud)
         },
@@ -64,18 +75,18 @@ export class AuthService {
     }
   }
 
-  public async createJwtRefreshToken(user: User): Promise<string> {
+  public async createJwtRefreshToken(user: UserDto): Promise<string> {
     try {
       return await this.jwtService.signAsync(
         {
           id: user.id.toString(),
-          sub: user.username,
+          sub: user.name,
         },
         {
           // リフレッシュトークン用のシークレットキー(JwtModule.registerAsyncで登録したシークレットキーを上書き)
           secret: 'MY_REFRESH_TOKEN_SUPER_SECRET_KEY',
-          expiresIn: '7d', //有効期限
-          algorithm: 'HS512', // 暗号化方式
+          expiresIn: '1d', //有効期限
+          algorithm: 'HS256', // 暗号化方式
           issuer: 'Nest Advance JWT Authentication', // 発行者(予約クレーム:iss)
           audience: 'Authenicated Users', // 受信者(予約クレーム:aud)
         },
@@ -88,7 +99,7 @@ export class AuthService {
     }
   }
 
-  public async register(signupRequest: SignupRequest): Promise<User> {
-    return await this.userService.createUser(signupRequest);
+  public async register(signupRequest: SignupRequest): Promise<UserDto> {
+    return await this.userCommandService.createUser(signupRequest);
   }
 }

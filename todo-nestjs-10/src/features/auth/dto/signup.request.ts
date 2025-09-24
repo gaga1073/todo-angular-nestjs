@@ -4,17 +4,17 @@ import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
 export class SignupRequest {
   @IsNotEmpty()
   @IsString()
-  @ApiProperty({ example: 'test_user' })
+  @ApiProperty({ example: 'テストユーザー' })
   username!: string;
 
   @IsNotEmpty()
   @IsString()
   @IsEmail()
-  @ApiProperty({ example: 'user@email.com' })
+  @ApiProperty({ example: 'test@email.com' })
   email!: string;
 
   @IsNotEmpty()
   @IsString()
-  @ApiProperty({ example: 'pass' })
+  @ApiProperty({ example: 'Password1' })
   password!: string;
 }

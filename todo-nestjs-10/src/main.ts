@@ -2,15 +2,12 @@ import { IncomingMessage } from 'http';
 import fastifyCookie from '@fastify/cookie';
 import { Logger as defaultLogger } from '@nestjs/common';
 import { HttpAdapterHost, NestFactory } from '@nestjs/core';
-import {
-  FastifyAdapter,
-  NestFastifyApplication,
-} from '@nestjs/platform-fastify';
+import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { Logger, LoggerErrorInterceptor } from 'nestjs-pino';
 import { ulid } from 'ulid';
-import { AppModule } from './app.module';
-import { ExceptionsFilter } from './core/filters/exceptions.filter';
+import { ExceptionsFilter } from '@/core/filters/exceptions.filter';
+import { AppModule } from 'app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(
@@ -20,6 +17,7 @@ async function bootstrap() {
         const existingId = req.headers['x-request-id'] as string | undefined;
         if (existingId) return existingId;
         const id = ulid();
+        req.headers['x-request-id'] = id;
         return id;
       },
     }),
@@ -27,7 +25,8 @@ async function bootstrap() {
 
   app.setGlobalPrefix('api');
   app.enableCors({
-    origin: '*',
+    origin: 'http://localhost:4200',
+    credentials: true,
   });
 
   new defaultLogger().log(`access port: ${process.env.PORT ?? 3000}`);
@@ -40,10 +39,10 @@ async function bootstrap() {
   app.useGlobalInterceptors(new LoggerErrorInterceptor());
 
   const config = new DocumentBuilder()
-    .setTitle('Cats example')
-    .setDescription('The cats API description')
+    .setTitle('TODO API')
+    .setDescription('The TODO API description')
     .setVersion('1.0')
-    .addTag('cats')
+    .addBearerAuth()
     .build();
   const documentFactory = () => SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api/docs', app, documentFactory);

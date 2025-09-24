@@ -1,12 +1,13 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { ModuleRef } from '@nestjs/core';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-local';
-import { User } from 'src/features/user/domain/entities/user';
+import { UserDto } from '../dto/login.response';
 import { AuthService } from '../services/auth.service';
 
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {
-  constructor(private authService: AuthService) {
+  constructor(private moduleRef: ModuleRef) {
     // emailをユーザー名として設定
     super({
       usernameField: 'email',
@@ -14,8 +15,10 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(email: string, password: string): Promise<User> {
-    const user = await this.authService.validateUser({
+  async validate(email: string, password: string): Promise<UserDto> {
+    const authService = await this.moduleRef.resolve(AuthService);
+
+    const user = await authService.validateUser({
       email,
       password,
     });

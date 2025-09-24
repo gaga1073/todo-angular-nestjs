@@ -1,56 +1,47 @@
-import { IncomingMessage } from 'http';
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { JwtModule, JwtService } from '@nestjs/jwt';
+import { FastifyRequest } from 'fastify';
+import { ClsModule, ClsService, ClsStore } from 'nestjs-cls';
 import { LoggerModule } from 'nestjs-pino';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { PrismaProvider } from './core/providers/prisma/prisma.provider';
-import { AuthModule } from './features/auth/auth.module';
-import { UserModule } from './features/user/user.module';
+import { AuthModule } from '@/auth/auth.module';
+import { CoreModule } from '@/core/core.module';
+import { PrismaProvider } from '@/core/providers/prisma.provider';
+import { getEnvFilePath, pinoConfig } from '@/core/utils/config.util';
+import { UserModule } from '@/user-management/user.module';
+import { AppController } from 'app.controller';
+import { AppService } from 'app.service';
 
-const pinoConfig = async (jwtService: JwtService) => {
-  return {
-    pinoHttp: {
-      transport: {
-        target: 'pino-pretty',
-        options: {
-          singleLine: true,
-          translateTime: true,
-          ignore:
-            'pid,req.headers,req.remoteAddress,req.remotePort,req.query,res.headers',
-        },
-      },
-      customProps: (req: IncomingMessage) => {
-        const authHeader = req.headers.authorization;
-        const token = authHeader?.replace(/^Bearer\s/, '');
-        let userId: string;
-
-        if (token) {
-          const payload = jwtService.decode(token) as { userId: string };
-          userId = payload.userId;
-        } else {
-          userId = '';
-        }
-
-        return {
-          userId: userId,
-        };
-      },
-    },
-  };
-};
+const envFilePath = getEnvFilePath(`${__dirname}`);
 
 @Module({
   imports: [
     AuthModule,
     UserModule,
+    CoreModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath,
+    }),
     LoggerModule.forRootAsync({
       imports: [JwtModule],
       inject: [JwtService],
       useFactory: pinoConfig,
     }),
+    ClsModule.forRoot({
+      middleware: {
+        mount: true,
+        setup: (cls: ClsService<ClsStore>, req: FastifyRequest) => {
+          cls.set('requestId', req.headers['x-request-id']);
+        },
+      },
+    }),
   ],
   controllers: [AppController],
   providers: [AppService, PrismaProvider],
 })
-export class AppModule {}
+export class AppModule {
+  // configure(consumer: MiddlewareConsumer): void {
+  //   consumer.apply(RequestIDMiddleware).forRoutes('*');
+  // }
+}

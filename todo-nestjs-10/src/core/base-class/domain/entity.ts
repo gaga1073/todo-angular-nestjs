@@ -11,5 +11,5 @@ export abstract class Entity<T, U> {
     return this._id;
   }
 
-  public abstract toPlainObject(): { id: string } & unknown;
+  // public abstract toPlainObject(): { id: string } & unknown;
 }

@@ -1,14 +1,15 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { Subject, takeUntil } from 'rxjs';
-import { ToastAlertType, ToastService } from '../services/toast.service';
+
 import { NavigationStart, Router } from '@angular/router';
+import { ToastService, ToastAlertType } from './toast.service';
 
 @Component({
   selector: 'app-toast',
   templateUrl: './toast.component.html',
   styleUrls: ['./toast.component.scss'],
 })
-export class ToastComponent {
+export class ToastComponent implements OnInit {
   dismissible = true;
 
   private readonly toastService = inject(ToastService);
@@ -25,12 +26,12 @@ export class ToastComponent {
 
     this.router.events.subscribe((event) => {
       if (event instanceof NavigationStart) {
-        this.toastService;
+        this.toastService.close();
       }
     });
   }
 
   onClosed(): void {
-    this.alert = null;
+    this.toastService.close();
   }
 }

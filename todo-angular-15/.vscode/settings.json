@@ -17,5 +17,6 @@
   "html.format.wrapAttributes": "auto",
   "html.format.wrapLineLength": 80,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "html.format.wrapAttributesIndentSize": null
+  "html.format.wrapAttributesIndentSize": null,
+  "javascript.preferences.importModuleSpecifier": "non-relative"
 }
