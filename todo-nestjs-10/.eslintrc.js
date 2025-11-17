@@ -66,4 +66,12 @@ module.exports = {
       },
     ],
   },
+  overrides: [
+    {
+      files: ['./prisma/**'],
+      rules: {
+        'no-restricted-imports': 'off',
+      },
+    },
+  ],
 };

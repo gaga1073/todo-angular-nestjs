@@ -8,3 +8,7 @@ override:
     default: 'mapTable=!workspaces'
   TodoModel:
     default: 'mapTable=!todos'
+  UserGroupModel:
+    default: 'mapTable=!user_groups'
+  GroupWorkspaceModel:
+    default: 'mapTable=!group_workspaces'

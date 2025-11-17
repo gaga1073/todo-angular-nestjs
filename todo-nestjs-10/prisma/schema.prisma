@@ -39,79 +39,102 @@ model UserModel {
   /// 更新日 *(TIMESTAMP WITH TIME ZONE)*
   updateAt DateTime @map("update_at") @db.Timestamptz()
 
-  groups Membership[]
+  groups        UserGroupModel[]
+  assignedTodos TodoModel[]      @relation("AssignedTodos")
+  createdTodos  TodoModel[]      @relation("CreatedTodos")
 
   @@map("users")
 }
 
 enum UserRole {
   admin
-  member
+  general
+}
+
+enum GroupClassification {
+  private
+  public
 }
 
 /// @namespace TODO
 model GroupModel {
   /// グループID *(CHAR(26))*
-  id          String   @id @db.Char(26)
+  id                  String              @id @db.Char(26)
   /// グループ名 *(グループ名)*
-  name        String   @unique
+  name                String              @unique
   /// グループの説明 *(TEXT)*
-  description String   @db.Text()
+  description         String              @db.Text()
+  /// グループの種別 *(ENUM{private, public}), NOT NULL)*
+  groupClassification GroupClassification @map("group_classification")
   /// 作成日 *(TIMESTAMP WITH TIME ZONE, NOT NULL)*
-  createAt    DateTime @map("create_at") @db.Timestamptz()
+  createAt            DateTime            @map("create_at") @db.Timestamptz()
   /// 更新日 *(TIMESTAMP WITH TIME ZONE)*
-  updateAt    DateTime @map("update_at") @db.Timestamptz()
+  updateAt            DateTime            @map("update_at") @db.Timestamptz()
 
-  users      Membership[]
-  workspaces WorkspaceModel[]
+  users UserGroupModel[]
+
+  workspaces GroupWorkspaceModel[]
 
   @@map("groups")
 }
 
-enum MembershipRole {
+enum WorkspaceRole {
   owner
-  admin
   member
 }
 
 /// @namespace TODO
-model Membership {
-  user     UserModel      @relation(fields: [userId], references: [id])
+model UserGroupModel {
+  user    UserModel  @relation(fields: [userId], references: [id])
   /// ユーザーID *(CHAR(26))*
-  userId   String         @map("user_id")
-  group    GroupModel     @relation(fields: [groupId], references: [id])
+  userId  String     @map("user_id")
+  group   GroupModel @relation(fields: [groupId], references: [id])
   /// グループID *(CHAR(26))*
-  groupId  String         @map("group_id")
-  /// ワークスペース権限 *(enum{admin, member})*
-  role     MembershipRole
-  /// 作成日 *(TIMESTAMP WITH TIME ZONE, NOT NULL)*
-  createAt DateTime       @map("create_at") @db.Timestamptz()
-  /// 更新日 *(TIMESTAMP WITH TIME ZONE)*
-  updateAt DateTime       @map("update_at") @db.Timestamptz()
+  groupId String     @map("group_id")
 
   @@id([userId, groupId])
-  @@map("memberships")
+  @@map("user_groups")
+}
+
+/// @namespace TODO
+model GroupWorkspaceModel {
+  workspace   WorkspaceModel @relation(fields: [workspaceId], references: [id])
+  /// ワークスペースID *(CHAR(26))*
+  workspaceId String         @map("workspace_id")
+  group       GroupModel     @relation(fields: [groupId], references: [id])
+  /// グループID *(CHAR(26))*
+  groupId     String         @map("group_id")
+  /// ワークスペース権限 *(enum{owner, member})*
+  role        WorkspaceRole
+
+  @@id([workspaceId, groupId])
+  @@map("group_workspaces")
+}
+
+enum WorkspaceClassification {
+  private
+  public
 }
 
 /// @namespace TODO
 model WorkspaceModel {
   /// ワークスペースID *(CHAR(26))*
-  id          String   @id @db.VarChar(26)
+  id                      String                  @id @db.VarChar(26)
   /// ワークスペース名 *(VARCHAR(30))*
-  name        String   @db.VarChar(30)
+  name                    String                  @db.VarChar(30)
   /// ワークスペースの説明 *(TEXT)*
-  description String   @db.Text()
-  /// グループID *(CHAR(26))*
-  groupId     String?   @map("group_id") @db.Char(26)
+  description             String                  @db.Text()
+  /// ワークスペースの種別 *(ENUM{private, public}), NOT NULL)*
+  workspaceClassification WorkspaceClassification @map("workspace_classification")
   /// 所有者のユーザーID *(CHAR(26))*  
-  ownerId     String   @map("owner_id") @db.Char(26)
+  createById              String                  @map("create_by_id") @db.Char(26)
   /// 作成日 *(TIMESTAMP WITH TIME ZONE, NOT NULL)*
-  createAt    DateTime @map("create_at") @db.Timestamptz()
+  createAt                DateTime                @map("create_at") @db.Timestamptz()
   /// 更新日 *(TIMESTAMP WITH TIME ZONE)*
-  updateAt    DateTime @map("update_at") @db.Timestamptz()
+  updateAt                DateTime                @map("update_at") @db.Timestamptz()
 
-  group GroupModel?  @relation(fields: [groupId], references: [id])
-  todo  TodoModel[]
+  groups GroupWorkspaceModel[]
+  todos  TodoModel[]
 
   @@map("workspaces")
 }
@@ -135,17 +158,19 @@ model TodoModel {
   /// ステータス *(enum{NotStarted, InProgress, Completed})*
   status      Status
   /// 完了期限日 *(CHAR(26))*
-  dueDate     DateTime @map("due_date") @db.Timestamptz()
+  dueDate     DateTime @map("due_date") @db.Date()
   /// 担当者のユーザーID *(CHAR(26))*
   assigneeId  String   @map("assignee_id") @db.Char(26)
   /// 作成者のユーザーID *(CHAR(26))*
-  createBy    String   @map("create_by") @db.Char(26)
+  createById  String   @map("create_by_id") @db.Char(26)
   /// 作成日 *(TIMESTAMP WITH TIME ZONE, NOT NULL)*
   createAt    DateTime @map("create_at") @db.Timestamptz()
   /// 更新日 *(TIMESTAMP WITH TIME ZONE)*
   updateAt    DateTime @map("update_at") @db.Timestamptz()
 
   workspace WorkspaceModel @relation(fields: [workspaceId], references: [id])
+  assignee  UserModel      @relation("AssignedTodos", fields: [assigneeId], references: [id])
+  createBy  UserModel      @relation("CreatedTodos", fields: [createById], references: [id])
 
   @@map("todos")
 }

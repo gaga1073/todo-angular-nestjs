@@ -6,8 +6,8 @@ import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { Logger, LoggerErrorInterceptor } from 'nestjs-pino';
 import { ulid } from 'ulid';
-import { ExceptionsFilter } from '@/core/filters/exceptions.filter';
-import { AppModule } from 'app.module';
+import { AppModule } from '@/app.module';
+import { ExceptionsFilter } from '@/shared/filters/exceptions.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(

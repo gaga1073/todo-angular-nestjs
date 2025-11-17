@@ -13,20 +13,20 @@ import {
 } from '@nestjs/swagger';
 import { plainToClass, plainToInstance } from 'class-transformer';
 import { FastifyReply } from 'fastify';
-import { LoginRequest } from '@/auth/dto/login.request';
-import { AuthResponse, UserDto } from '@/auth/dto/login.response';
-import { SignupRequest } from '@/auth/dto/signup.request';
-import { AuthService } from '@/auth/services/auth.service';
-import { AuthUser } from '@/core/decorators/auth-user.decorator';
-import { JwtAuthGuard } from '@/core/guards/jwt-auth.guard';
-import { LocalAuthGuard } from '@/core/guards/local-auth.guard';
-import { RefreshTokenJwtAuthGuard } from '@/core/guards/refresh-token-jwt.guard';
 import { AppLoggerFactory } from '@/core/providers/app-logger.factory';
-import { AppLogger } from '@/core/utils/app-logger.util';
+import { LoginRequest } from '@/features/auth/dto/login.request';
+import { AuthResponse, UserDto } from '@/features/auth/dto/login.response';
+import { SignupRequest } from '@/features/auth/dto/signup.request';
+import { AuthService } from '@/features/auth/services/auth.service';
+import { AuthUser } from '@/shared/decorators/auth-user.decorator';
+import { JwtAuthGuard } from '@/shared/guards/jwt-auth.guard';
+import { LocalAuthGuard } from '@/shared/guards/local-auth.guard';
+import { RefreshTokenJwtAuthGuard } from '@/shared/guards/refresh-token-jwt.guard';
+import { AppLogger } from '@/shared/utils/app-logger.util';
 import {
   setRefreshTokenToHttpOnlyCookie,
   terminateRefreshTokenHttpOnlyCookie,
-} from '@/core/utils/response.util';
+} from '@/shared/utils/response.util';
 
 @Controller('/auth')
 @ApiTags('Auth')
@@ -135,16 +135,25 @@ export class AuthController {
   @Get('/logout')
   @HttpCode(200)
   @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiOperation({
     summary: `ログアウト`,
     description: `ログアウト処理を実行します。`,
   })
   @ApiOkResponse({ description: 'Success' })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
-  @ApiBearerAuth()
   public async logout(@Res({ passthrough: true }) reply: FastifyReply): Promise<void> {
     this.appLogger.info('[GET] /auth/logout is invoked', { method: this.logout.name });
     terminateRefreshTokenHttpOnlyCookie(reply);
     return;
+  }
+
+  @Get('/me')
+  @HttpCode(200)
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  public async getMe(@AuthUser() user: UserDto): Promise<UserDto> {
+    this.appLogger.info('[GET] /auth/me is invoked', { method: this.logout.name });
+    return user;
   }
 }

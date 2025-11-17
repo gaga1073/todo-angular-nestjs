@@ -10,14 +10,14 @@
     "target": "ES2021",
     "sourceMap": true,
     "outDir": "./dist",
-    "baseUrl": "./src",
+    // "baseUrl": "./src",
     "incremental": true,
     "skipLibCheck": true,
     "paths": {
-      "@/user-management/*": ["features/user-management/*"],
-      "@/auth/*": ["features/auth/*"],
-      "@/todo/*": ["features/todo/*"],
-      "@/core/*": ["core/*"]
+      "@/*": ["./src/*"],
+      "@/features/*": ["./src/features/*"],
+      "@/core/*": ["./src/core/*"],
+      "@/shared/*": ["./src/shared/*"]
     }
   }
 }

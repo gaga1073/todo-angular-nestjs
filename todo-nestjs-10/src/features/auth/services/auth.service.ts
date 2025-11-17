@@ -6,24 +6,25 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UserModel } from '@prisma/client';
-import { UserDto } from '@/auth/dto/login.response';
-import { SignupRequest } from '@/auth/dto/signup.request';
+import { plainToInstance } from 'class-transformer';
+import { CreateUserDomainService } from '@/core/domain-services/create-user-domain.service';
 import { AppLoggerFactory } from '@/core/providers/app-logger.factory';
 import { PrismaProvider } from '@/core/providers/prisma.provider';
-import { AppLogger } from '@/core/utils/app-logger.util';
-import { UserDomainService } from '@/user-management/domain/services/user-domain.service';
-import { UserCommandService } from '@/user-management/services/user-command.service';
+import { UserDto } from '@/features/auth/dto/login.response';
+import { SignupRequest } from '@/features/auth/dto/signup.request';
+import { User } from '@/features/user/domain/entities/user';
+import { AppLogger } from '@/shared/utils/app-logger.util';
+import { comparePassword, hashPassword } from '@/shared/utils/password.util';
 
 @Injectable()
 export class AuthService {
   private readonly appLogger: AppLogger;
 
   constructor(
-    private readonly UserDomainService: UserDomainService,
     private readonly jwtService: JwtService,
     private readonly appLoggerFactory: AppLoggerFactory,
     private readonly prisma: PrismaProvider,
-    private readonly userCommandService: UserCommandService,
+    private readonly createUserDomainService: CreateUserDomainService,
   ) {
     this.appLogger = this.appLoggerFactory.create(AuthService.name);
   }
@@ -43,7 +44,7 @@ export class AuthService {
         },
       });
 
-      await this.UserDomainService.comparePassword(password, user.password);
+      await comparePassword(password, user.password);
 
       return user;
     } catch (error) {
@@ -100,6 +101,19 @@ export class AuthService {
   }
 
   public async register(signupRequest: SignupRequest): Promise<UserDto> {
-    return await this.userCommandService.createUser(signupRequest);
+    const hashedPassword = await hashPassword(signupRequest.password);
+
+    const user = User.create({
+      email: signupRequest.email,
+      name: signupRequest.username,
+      password: hashedPassword,
+      role: 'general',
+    });
+
+    await this.createUserDomainService.execute(user);
+
+    const response = plainToInstance(UserDto, user);
+
+    return response;
   }
 }

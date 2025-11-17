@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ClsService } from 'nestjs-cls';
-import { AppLogger } from '../utils/app-logger.util';
+import { AppLogger } from '@/shared/utils/app-logger.util';
 
 // @Injectable({ scope: Scope.REQUEST })
 @Injectable()

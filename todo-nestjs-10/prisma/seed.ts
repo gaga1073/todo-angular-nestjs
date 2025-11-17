@@ -11,7 +11,8 @@ async function main() {
   TRUNCATE TABLE 
     "todos",
     "workspaces",
-    "memberships",
+    "user_groups",
+    "group_workspaces",
     "groups",
     "users"
   RESTART IDENTITY CASCADE

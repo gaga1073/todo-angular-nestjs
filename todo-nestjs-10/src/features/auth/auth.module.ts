@@ -1,12 +1,9 @@
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { ClsModule } from 'nestjs-cls';
-import { AuthController } from '@/auth/controllers/auth.controller';
-import { AuthService } from '@/auth/services/auth.service';
-import { JwtStrategy } from '@/auth/strategies/jwt.strategy';
-import { LocalStrategy } from '@/auth/strategies/login.strategy';
-import { RefreshTokenJwtStrategy } from '@/auth/strategies/refresh-token-jwt.strategy';
-import { UserModule } from '@/user-management/user.module';
+import { AuthController } from '@/features/auth/controllers/auth.controller';
+import { AuthService } from '@/features/auth/services/auth.service';
+import { UserModule } from '@/features/user/user.module';
 
 @Module({
   imports: [
@@ -16,7 +13,8 @@ import { UserModule } from '@/user-management/user.module';
       useFactory: () => ({ secret: 'MY_SUPER_SECRET_KEY' }),
     }),
   ],
-  providers: [AuthService, LocalStrategy, JwtStrategy, RefreshTokenJwtStrategy],
+  providers: [AuthService],
+  exports: [AuthService],
   controllers: [AuthController],
 })
 export class AuthModule {}

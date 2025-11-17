@@ -4,13 +4,12 @@ import { JwtModule, JwtService } from '@nestjs/jwt';
 import { FastifyRequest } from 'fastify';
 import { ClsModule, ClsService, ClsStore } from 'nestjs-cls';
 import { LoggerModule } from 'nestjs-pino';
-import { AuthModule } from '@/auth/auth.module';
 import { CoreModule } from '@/core/core.module';
 import { PrismaProvider } from '@/core/providers/prisma.provider';
-import { getEnvFilePath, pinoConfig } from '@/core/utils/config.util';
-import { UserModule } from '@/user-management/user.module';
-import { AppController } from 'app.controller';
-import { AppService } from 'app.service';
+import { AuthModule } from '@/features/auth/auth.module';
+import { TodoModule } from '@/features/todo/todo.module';
+import { UserModule } from '@/features/user/user.module';
+import { getEnvFilePath, pinoConfig } from '@/shared/utils/config.util';
 
 const envFilePath = getEnvFilePath(`${__dirname}`);
 
@@ -18,6 +17,7 @@ const envFilePath = getEnvFilePath(`${__dirname}`);
   imports: [
     AuthModule,
     UserModule,
+    TodoModule,
     CoreModule,
     ConfigModule.forRoot({
       isGlobal: true,
@@ -36,9 +36,10 @@ const envFilePath = getEnvFilePath(`${__dirname}`);
         },
       },
     }),
+    TodoModule,
   ],
-  controllers: [AppController],
-  providers: [AppService, PrismaProvider],
+  controllers: [],
+  providers: [PrismaProvider],
 })
 export class AppModule {
   // configure(consumer: MiddlewareConsumer): void {
