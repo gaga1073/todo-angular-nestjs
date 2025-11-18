@@ -1,9 +1,9 @@
+import { Entity } from '@/core/domain/base-classes/entity';
 import { SampleEvent } from '@/features/user/domain/events/sample.envet';
 import { Email } from '@/features/user/domain/value-objects/email.type';
 import { HashPassword } from '@/features/user/domain/value-objects/hash-password.type';
 import { Role } from '@/features/user/domain/value-objects/role.type';
 import { UserId } from '@/features/user/domain/value-objects/user-id.type';
-import { Entity } from '@/shared/base-class/domain/entity';
 import { UserRoleType } from '@/shared/constants/management.constant';
 
 type UserProps = {

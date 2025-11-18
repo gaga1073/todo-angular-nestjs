@@ -3,7 +3,6 @@ import { ConfigService } from '@nestjs/config';
 import { ClsService } from 'nestjs-cls';
 import { AppLogger } from '@/shared/utils/app-logger.util';
 
-// @Injectable({ scope: Scope.REQUEST })
 @Injectable()
 export class AppLoggerFactory {
   constructor(

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { plainToInstance } from 'class-transformer';
-import { PrismaProvider } from '@/core/providers/prisma.provider';
+import { PrismaProvider } from '@/shared/providers/prisma.provider';
 import { GetGroupResponse } from '@/features/group/dto/response/get-group.response';
 
 @Injectable()

@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { EventPublisher } from '@nestjs/cqrs';
 import { plainToInstance } from 'class-transformer';
-import { CreateUserDomainService } from '@/core/domain-services/create-user-domain.service';
+import { UserRoleType } from '@/shared/constants/management.constant';
+import { CreateUserDomainService } from '@/core/domain/services/create-user-domain.service';
+import { hashPassword } from '@/shared/utils/password.util';
 import { User } from '@/features/user/domain/entities/user';
 import { EmailDuplicationCheckDomainService } from '@/features/user/domain/services/email-duplication-check-domain.service';
 import { UserDto } from '@/features/user/dto/response/user.dto';
-import { UserRoleType } from '@/shared/constants/management.constant';
-import { hashPassword } from '@/shared/utils/password.util';
 
 @Injectable()
 export class UserCommandService {

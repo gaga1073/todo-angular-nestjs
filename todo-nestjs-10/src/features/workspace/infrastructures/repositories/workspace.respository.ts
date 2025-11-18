@@ -2,10 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { TransactionHost } from '@nestjs-cls/transactional';
 import { TransactionalAdapterPrisma } from '@nestjs-cls/transactional-adapter-prisma';
 import { WorkspaceRole } from '@prisma/client';
-import { AppLoggerFactory } from '@/core/providers/app-logger.factory';
+import { AppLoggerFactory } from '@/shared/providers/app-logger.factory';
 import { Workspace } from '@/features/workspace/domain/entities/workspace';
 import { IWorkspaceRespitory } from '@/features/workspace/domain/repositories/workspace-repository.interface';
-import { handlePrismaError } from '@/shared/base-class/exception/prismaException';
+import { handlePrismaError } from '@/shared/utils/prismaException.util';
 import { AppLogger } from '@/shared/utils/app-logger.util';
 
 @Injectable()

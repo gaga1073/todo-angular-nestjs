@@ -7,5 +7,5 @@ export type WorkspaceClassificationType = (typeof GROUP_CLASSIFICATION)[number];
 export const USER_ROLE = ['admin', 'general'] as const;
 export type UserRoleType = (typeof USER_ROLE)[number];
 
-export const WORKSPACE_ROLE = ['owner', 'member', 'viwer'];
+export const WORKSPACE_ROLE = ['owner', 'member', 'viwer'] as const;
 export type WorkspaceRoleType = (typeof WORKSPACE_ROLE)[number];

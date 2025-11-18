@@ -1,6 +1,6 @@
 import { UserId } from '@/features/user/domain/value-objects/user-id.type';
 import { WorkspaceId } from '@/features/workspace/domain/value-objects/workspace-id.type';
-import { Entity } from '@/shared/base-class/domain/entity';
+import { Entity } from '@/core/domain/base-classes/entity';
 import { TodoStatusType } from '@/shared/constants/todo.constant';
 import { TodoId } from '@/features/todo/domain/value-objects/todo-id.type';
 import { TodoStatus } from '@/features/todo/domain/value-objects/todo-status.type';

@@ -1,9 +1,9 @@
 import { Injectable, InternalServerErrorException, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
+import { DecodedToken } from '@/shared/types/decode-token.type';
 import { UserDto } from '@/features/auth/dto/login.response';
 import { UserQueryService } from '@/features/user/application/services/user-query.service';
-import { DecodedToken } from '@/shared/types/decode-token.type';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy, 'access-token-jwt') {

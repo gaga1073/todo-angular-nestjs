@@ -5,10 +5,11 @@ import { FastifyRequest } from 'fastify';
 import { ClsModule, ClsService, ClsStore } from 'nestjs-cls';
 import { LoggerModule } from 'nestjs-pino';
 import { CoreModule } from '@/core/core.module';
-import { PrismaProvider } from '@/core/providers/prisma.provider';
 import { AuthModule } from '@/features/auth/auth.module';
 import { TodoModule } from '@/features/todo/todo.module';
 import { UserModule } from '@/features/user/user.module';
+import { PrismaProvider } from '@/shared/providers/prisma.provider';
+import { SharedModule } from '@/shared/shared.module';
 import { getEnvFilePath, pinoConfig } from '@/shared/utils/config.util';
 
 const envFilePath = getEnvFilePath(`${__dirname}`);
@@ -37,12 +38,9 @@ const envFilePath = getEnvFilePath(`${__dirname}`);
       },
     }),
     TodoModule,
+    SharedModule,
   ],
   controllers: [],
   providers: [PrismaProvider],
 })
-export class AppModule {
-  // configure(consumer: MiddlewareConsumer): void {
-  //   consumer.apply(RequestIDMiddleware).forRoutes('*');
-  // }
-}
+export class AppModule {}

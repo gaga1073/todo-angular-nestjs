@@ -13,7 +13,6 @@ import {
 } from '@nestjs/swagger';
 import { plainToClass, plainToInstance } from 'class-transformer';
 import { FastifyReply } from 'fastify';
-import { AppLoggerFactory } from '@/core/providers/app-logger.factory';
 import { LoginRequest } from '@/features/auth/dto/login.request';
 import { AuthResponse, UserDto } from '@/features/auth/dto/login.response';
 import { SignupRequest } from '@/features/auth/dto/signup.request';
@@ -22,6 +21,7 @@ import { AuthUser } from '@/shared/decorators/auth-user.decorator';
 import { JwtAuthGuard } from '@/shared/guards/jwt-auth.guard';
 import { LocalAuthGuard } from '@/shared/guards/local-auth.guard';
 import { RefreshTokenJwtAuthGuard } from '@/shared/guards/refresh-token-jwt.guard';
+import { AppLoggerFactory } from '@/shared/providers/app-logger.factory';
 import { AppLogger } from '@/shared/utils/app-logger.util';
 import {
   setRefreshTokenToHttpOnlyCookie,

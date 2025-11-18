@@ -7,10 +7,10 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { AppLoggerFactory } from '@/core/providers/app-logger.factory';
+import { AppLoggerFactory } from '@/shared/providers/app-logger.factory';
+import { AppLogger } from '@/shared/utils/app-logger.util';
 import { GetTodosResponse } from '@/features/todo/dto/response/get-todos.response';
 import { TodoQueryService } from '@/features/todo/services/todo-query.service';
-import { AppLogger } from '@/shared/utils/app-logger.util';
 
 @Controller('/todos')
 @ApiTags('Todo')

@@ -1,7 +1,7 @@
 import { GroupClassification } from '@/features/group/domain/value-objects/group-classification.type';
 import { GroupId } from '@/features/group/domain/value-objects/group-id.type';
 import { GroupMembership } from '@/features/group/domain/value-objects/group-member.type';
-import { Entity } from '@/shared/base-class/domain/entity';
+import { Entity } from '@/core/domain/base-classes/entity';
 
 type GroupProps = {
   name: string;

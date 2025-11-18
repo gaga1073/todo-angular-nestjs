@@ -9,7 +9,7 @@ import { plainToInstance } from 'class-transformer';
 import { validateOrReject, ValidationError } from 'class-validator';
 import { FastifyRequest } from 'fastify';
 import { firstValueFrom, isObservable } from 'rxjs';
-import { AppLoggerFactory } from '@/core/providers/app-logger.factory';
+import { AppLoggerFactory } from '@/shared/providers/app-logger.factory';
 import { LoginRequest } from '@/features/auth/dto/login.request';
 import { AppLogger } from '@/shared/utils/app-logger.util';
 

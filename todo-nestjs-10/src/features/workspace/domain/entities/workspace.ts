@@ -1,9 +1,9 @@
+import { Entity } from '@/core/domain/base-classes/entity';
 import { GroupId } from '@/features/group/domain/value-objects/group-id.type';
 import { GroupWorkspaceAccess } from '@/features/group/domain/value-objects/group-workspace-access.type';
 import { UserId } from '@/features/user/domain/value-objects/user-id.type';
 import { WorkspaceClassification } from '@/features/workspace/domain/value-objects/workspace-classification.type';
 import { WorkspaceId } from '@/features/workspace/domain/value-objects/workspace-id.type';
-import { Entity } from '@/shared/base-class/domain/entity';
 import {
   WorkspaceClassificationType,
   WorkspaceRoleType,

@@ -13,6 +13,4 @@ export abstract class Entity<T, U> extends AggregateRoot {
   public get id(): T {
     return this._id;
   }
-
-  // public abstract toPlainObject(): { id: string } & unknown;
 }

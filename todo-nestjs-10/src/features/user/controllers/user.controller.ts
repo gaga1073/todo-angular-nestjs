@@ -8,13 +8,13 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { AppLoggerFactory } from '@/core/providers/app-logger.factory';
+import { JwtAuthGuard } from '@/shared/guards/jwt-auth.guard';
+import { UserRole, UserRolesGuard } from '@/shared/guards/user-role.guard';
+import { AppLoggerFactory } from '@/shared/providers/app-logger.factory';
+import { AppLogger } from '@/shared/utils/app-logger.util';
 import { UserCommandService } from '@/features/user/application/services/user-command.service';
 import { PostUserRequest } from '@/features/user/dto/request/post-user.request';
 import { PostUserResponse } from '@/features/user/dto/response/post-user-response';
-import { JwtAuthGuard } from '@/shared/guards/jwt-auth.guard';
-import { UserRole, UserRolesGuard } from '@/shared/guards/user-role.guard';
-import { AppLogger } from '@/shared/utils/app-logger.util';
 
 @Controller('users')
 @ApiTags('User')

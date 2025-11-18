@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { plainToInstance } from 'class-transformer';
-import { AppLoggerFactory } from '@/core/providers/app-logger.factory';
-import { PrismaProvider } from '@/core/providers/prisma.provider';
+import { handlePrismaError } from '@/shared/utils/prismaException.util';
+import { AppLoggerFactory } from '@/shared/providers/app-logger.factory';
+import { PrismaProvider } from '@/shared/providers/prisma.provider';
+import { AppLogger } from '@/shared/utils/app-logger.util';
 import { UserDto } from '@/features/user/dto/response/user.dto';
 import { UserRepository } from '@/features/user/infrastructures/repositories/user.repository';
-import { handlePrismaError } from '@/shared/base-class/exception/prismaException';
-import { AppLogger } from '@/shared/utils/app-logger.util';
 
 @Injectable()
 export class UserQueryService {
