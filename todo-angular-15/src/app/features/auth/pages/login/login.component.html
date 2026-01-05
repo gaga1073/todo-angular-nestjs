@@ -1,7 +1,8 @@
 <form [formGroup]="loginForm" (submit)="onSubmit()"
   class="login__form-container">
-  <div class="login__title-wrapper">
-    <div class="login__title display-6">Login</div>
+  <div
+    class="login__title-wrapper d-flex align-items-center justify-content-center">
+    <h1 class="heading-page-title">Login</h1>
   </div>
   <div class="login__input-wrapper">
     <label for="login__email">Email</label>
@@ -29,12 +30,13 @@
       パスワードは必須です
     </span>
   </div>
-  <div class="login__button-wrapper">
+  <div
+    class="login__button-wrapper d-flex align-items-center justify-content-center">
     <button type="submit" class="btn btn-primary">
       ログイン
     </button>
   </div>
-  <div class="login__footer">
+  <div class="login__footer text-center">
     <a routerLink="/auth/sign-up">サインアップ</a>
   </div>
 </form>

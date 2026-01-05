@@ -1,0 +1,12 @@
+<div class="modal-body justify-content-center my-3 mx-2">
+  <p>{{message}}</p>
+  <div class="d-flex justify-content-end gap-3">
+
+
+    <button *ngIf="modalType==='COMFIRM'" type="button"
+      class="btn btn-outline-primary btn-pill"
+      (mousedown)="onClose()">キャンセル</button>
+    <button type="submit" class="btn btn-primary"
+      (click)="onClick()">OK</button>
+  </div>
+</div>

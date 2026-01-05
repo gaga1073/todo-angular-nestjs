@@ -24,7 +24,9 @@ import { RefreshTokenJwtAuthGuard } from '@/shared/guards/refresh-token-jwt.guar
 import { AppLoggerFactory } from '@/shared/providers/app-logger.factory';
 import { AppLogger } from '@/shared/utils/app-logger.util';
 import {
+  setAccessTokenToHttpOnlyCookie,
   setRefreshTokenToHttpOnlyCookie,
+  terminateAccessTokenCookie,
   terminateRefreshTokenHttpOnlyCookie,
 } from '@/shared/utils/response.util';
 
@@ -64,9 +66,10 @@ export class AuthController {
 
     const accessToken = await this.authService.createJwtAccessToken(user);
 
+    setAccessTokenToHttpOnlyCookie(reply, accessToken);
+
     const response = plainToClass(AuthResponse, {
       user: user,
-      accessToken,
     });
 
     return response;
@@ -95,9 +98,10 @@ export class AuthController {
 
     const accessToken = await this.authService.createJwtAccessToken(user);
 
+    setAccessTokenToHttpOnlyCookie(reply, accessToken);
+
     const response = plainToInstance(AuthResponse, {
       user: user,
-      accessToken,
     });
 
     return response;
@@ -124,9 +128,10 @@ export class AuthController {
 
     const accessToken = await this.authService.createJwtAccessToken(user);
 
+    setAccessTokenToHttpOnlyCookie(reply, accessToken);
+
     const response = plainToInstance(AuthResponse, {
       user: user,
-      accessToken,
     });
 
     return response;
@@ -144,6 +149,7 @@ export class AuthController {
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   public async logout(@Res({ passthrough: true }) reply: FastifyReply): Promise<void> {
     this.appLogger.info('[GET] /auth/logout is invoked', { method: this.logout.name });
+    terminateAccessTokenCookie(reply);
     terminateRefreshTokenHttpOnlyCookie(reply);
     return;
   }

@@ -8,13 +8,13 @@ import { JwtService } from '@nestjs/jwt';
 import { UserModel } from '@prisma/client';
 import { plainToInstance } from 'class-transformer';
 import { CreateUserDomainService } from '@/core/domain/services/create-user-domain.service';
+import { UserDto } from '@/features/auth/dto/login.response';
+import { SignupRequest } from '@/features/auth/dto/signup.request';
+import { User } from '@/features/user/domain/entities/user';
 import { AppLoggerFactory } from '@/shared/providers/app-logger.factory';
 import { PrismaProvider } from '@/shared/providers/prisma.provider';
 import { AppLogger } from '@/shared/utils/app-logger.util';
 import { comparePassword, hashPassword } from '@/shared/utils/password.util';
-import { UserDto } from '@/features/auth/dto/login.response';
-import { SignupRequest } from '@/features/auth/dto/signup.request';
-import { User } from '@/features/user/domain/entities/user';
 
 @Injectable()
 export class AuthService {
@@ -40,7 +40,7 @@ export class AuthService {
       const user = await this.prisma.userModel.findFirstOrThrow({
         where: {
           email: email,
-          isDelete: false,
+          isDeleted: false,
         },
       });
 

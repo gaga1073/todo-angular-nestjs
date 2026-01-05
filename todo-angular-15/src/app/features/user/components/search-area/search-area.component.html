@@ -1,0 +1,28 @@
+<div>
+  <form class="d-flex gap-4" [formGroup]="userSearchForm" (submit)="onSubmit()">
+    <div class=" input-group search__input">
+      <span class="input-group-text search__icon">
+        <i class="bi bi-search"></i>
+      </span>
+      <input type="text" class="form-control" placeholder="名前またはメールアドレス"
+        formControlName="name">
+    </div>
+    <div class="d-flex gap-2">
+      <div class="d-flex align-items-center">権限:</div>
+      <select class="form-select search__select">
+        <option selected value="noStarted">すべて</option>
+        <option value="InProgress">管理者</option>
+        <option value="Completed">一般</option>
+      </select>
+    </div>
+    <div class="d-flex gap-2">
+      <div class="d-flex align-items-center">アクティブ:</div>
+      <select class="form-select search__select">
+        <option selected value="noStarted">すべて</option>
+        <option value="InProgress">アクティブ</option>
+        <option value="Completed">停止</option>
+      </select>
+    </div>
+    <button class="btn btn-primary">検索</button>
+  </form>
+</div>

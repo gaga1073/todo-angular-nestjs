@@ -23,21 +23,25 @@ datasource db {
 /// @namespace TODO
 model UserModel {
   /// ユーザーID *(CHAR(26), NOT NULL)*
-  id       String   @id @db.Char(26)
+  id        String   @id @db.Char(26)
   /// ユーザー名 *(VARCHAR(30), NOT NULL)*
-  name     String   @db.VarChar(30)
+  name      String   @db.VarChar(30)
   /// メールアドレス *(VARCHAR(50), NOT NULL)*
-  email    String   @unique @db.VarChar(50)
+  email     String   @unique @db.VarChar(50)
   /// ユーザー管理権限 *(ENUM{amdin, member}), NOT NULL)*
-  role     UserRole
-  /// 削除フラグ *(論理削除フラグ)*
-  isDelete Boolean  @map("is_delete")
+  role      UserRole
+  /// 削除フラグ *(BOOLEAN, NOT NULL)*
+  isDeleted Boolean  @default(false) @map("is_deleted")
   /// パスワード *(VARCHAR(30), NOT NULL)*
-  password String   @db.VarChar(60)
+  password  String   @db.VarChar(60)
+  /// アクティブ状態 *(BOOLEAN, NOT NULL)*
+  isActive  Boolean  @default(true) @map("is_active")
   /// 作成日 *(TIMESTAMP WITH TIME ZONE, NOT NULL)*
-  createAt DateTime @map("create_at") @db.Timestamptz()
+  createAt  DateTime @map("create_at") @db.Timestamptz()
   /// 更新日 *(TIMESTAMP WITH TIME ZONE)*
-  updateAt DateTime @map("update_at") @db.Timestamptz()
+  updateAt  DateTime @map("update_at") @db.Timestamptz()
+  /// 排他制御バージョン *(INT)*
+  version   Int      @default(1) @db.Integer
 
   groups        UserGroupModel[]
   assignedTodos TodoModel[]      @relation("AssignedTodos")
@@ -70,6 +74,8 @@ model GroupModel {
   createAt            DateTime            @map("create_at") @db.Timestamptz()
   /// 更新日 *(TIMESTAMP WITH TIME ZONE)*
   updateAt            DateTime            @map("update_at") @db.Timestamptz()
+  /// 排他制御バージョン *(INT)*
+  version             Int                 @default(1) @db.Integer
 
   users UserGroupModel[]
 
@@ -106,6 +112,8 @@ model GroupWorkspaceModel {
   groupId     String         @map("group_id")
   /// ワークスペース権限 *(enum{owner, member})*
   role        WorkspaceRole
+  /// 排他制御バージョン *(INT)*
+  version     Int            @default(1) @db.Integer
 
   @@id([workspaceId, groupId])
   @@map("group_workspaces")
@@ -132,6 +140,8 @@ model WorkspaceModel {
   createAt                DateTime                @map("create_at") @db.Timestamptz()
   /// 更新日 *(TIMESTAMP WITH TIME ZONE)*
   updateAt                DateTime                @map("update_at") @db.Timestamptz()
+  /// 排他制御バージョン *(INT)*
+  version                 Int                     @default(1) @db.Integer
 
   groups GroupWorkspaceModel[]
   todos  TodoModel[]
@@ -167,6 +177,8 @@ model TodoModel {
   createAt    DateTime @map("create_at") @db.Timestamptz()
   /// 更新日 *(TIMESTAMP WITH TIME ZONE)*
   updateAt    DateTime @map("update_at") @db.Timestamptz()
+  /// 排他制御バージョン *(INT)*
+  version     Int      @default(1) @db.Integer
 
   workspace WorkspaceModel @relation(fields: [workspaceId], references: [id])
   assignee  UserModel      @relation("AssignedTodos", fields: [assigneeId], references: [id])

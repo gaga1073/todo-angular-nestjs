@@ -1,0 +1,39 @@
+:host {
+  .home__container {
+    table {
+      td {
+        vertical-align: middle;
+
+        button {
+          margin-right: 1rem;
+          font-size: 0.8rem;
+        }
+      }
+
+      th:nth-child(1),
+      td:nth-child(1) {
+        width: 30%;
+      } // タイトル
+      th:nth-child(2),
+      td:nth-child(2) {
+        width: 15;
+      } // ステータス
+      th:nth-child(3),
+      td:nth-child(3) {
+        width: 15%;
+      } // 担当者
+      th:nth-child(4),
+      td:nth-child(4) {
+        width: 15%;
+      } // 作成者
+      th:nth-child(5),
+      td:nth-child(5) {
+        width: 15%;
+      } // 操作
+      th:nth-child(6),
+      td:nth-child(6) {
+        width: 15%;
+      } // 操作
+    }
+  }
+}

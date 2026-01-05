@@ -2,20 +2,25 @@ import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 import { AuthenticationService } from '@/features/auth/services/authentication.service';
 import { TODO_URLs } from '@/core/constants/path.constant';
-import { firstValueFrom } from 'rxjs';
+import { CookieService } from 'ngx-cookie-service';
 
-export const noAuthenticationGuard: CanActivateFn = async () => {
+export const noAuthenticationGuard: CanActivateFn = () => {
   const authenticationService = inject(AuthenticationService);
+  const cookieService = inject(CookieService);
 
   const router = inject(Router);
 
-  const isLogin = await firstValueFrom(authenticationService.isLogin$);
+  let isLogin = false;
+
+  authenticationService.isLogin$.subscribe({
+    next: (value) => {
+      isLogin = value;
+    },
+  });
 
   if (isLogin) {
-    router.navigateByUrl(TODO_URLs.home);
-    return false;
+    return router.createUrlTree([TODO_URLs.home]);
   }
 
-  // await router.navigate([AUTHENTICATION_URLs.login]);
   return true;
 };

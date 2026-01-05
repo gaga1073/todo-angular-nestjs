@@ -10,4 +10,5 @@ export class LoadingComponent {
   private readonly loadingService = inject(LoadingService);
 
   loading$ = this.loadingService.loading$;
+  size$ = this.loadingService.size$;
 }

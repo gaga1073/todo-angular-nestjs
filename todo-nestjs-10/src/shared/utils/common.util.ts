@@ -1,4 +1,8 @@
-export const toISOStringWithTimezone = (date: Date): string => {
+import { existsSync } from 'fs';
+import { resolve } from 'path';
+import { InternalServerErrorException } from '@nestjs/common';
+
+export function toISOStringWithTimezone(date: Date): string {
   const zeroPadding = (s: string): string => {
     return ('0' + s).slice(-2);
   };
@@ -26,4 +30,16 @@ export const toISOStringWithTimezone = (date: Date): string => {
   const tzMinute = zeroPadding((Math.abs(diffFromUtc) % 60).toString());
 
   return `${localDate}T${localTime}${tzSign}${tzHour}:${tzMinute}`;
-};
+}
+
+export function getEnvFilePath(envFilesDirectory: string): string {
+  const env = process.env.NODE_ENV;
+  const fileName = env ? `.env.${env}` : '.env.development';
+  const filePath = resolve(`${envFilesDirectory}/environment/${fileName}`);
+  if (!existsSync(filePath)) {
+    throw new InternalServerErrorException(
+      `Environment file "${fileName}" was not found in directory "${envFilesDirectory}".`,
+    );
+  }
+  return filePath;
+}

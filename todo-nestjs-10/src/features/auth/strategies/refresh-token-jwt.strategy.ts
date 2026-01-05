@@ -2,9 +2,9 @@ import { Injectable, InternalServerErrorException, UnauthorizedException } from 
 import { PassportStrategy } from '@nestjs/passport';
 import { FastifyRequest } from 'fastify';
 import { Strategy } from 'passport-jwt';
-import { DecodedToken } from '@/shared/types/decode-token.type';
 import { UserDto } from '@/features/auth/dto/login.response';
 import { UserQueryService } from '@/features/user/application/services/user-query.service';
+import { DecodedToken } from '@/shared/types/decode-token.type';
 
 @Injectable()
 export class RefreshTokenJwtStrategy extends PassportStrategy(Strategy, 'refresh-token-jwt') {

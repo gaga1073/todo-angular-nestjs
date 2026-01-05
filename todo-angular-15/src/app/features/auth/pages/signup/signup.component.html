@@ -5,11 +5,11 @@
   </button>
   <form [formGroup]="signupForm" (submit)="onSubmit()"
     class="signup__form-container">
-    <div class="signup__title-wrapper">
+    <div class="d-flex align-items-center justify-content-center">
 
-      <div class="signup__title display-6">
-        Sign Up
-      </div>
+      <!-- <div class="signup__title display-6 heading-page-title"> -->
+      <h1 class="heading-page-title">Sign Up</h1>
+      <!-- </div> -->
     </div>
     <div class="signup__input-wrapper">
       <label for="signup__username">User Name *</label>
@@ -74,7 +74,7 @@
         パスワードが一致しません
       </span>
     </div>
-    <div class="signup__button-wrapper">
+    <div class="d-flex align-items-center justify-content-center">
       <button type="submit" class="btn btn-primary">登録</button>
     </div>
   </form>

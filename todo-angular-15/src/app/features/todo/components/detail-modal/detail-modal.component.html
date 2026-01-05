@@ -1,0 +1,67 @@
+<div class="modal__container">
+  <div class="modal-header d-flex justify-content-end">
+    <h6>タスク詳細</h6>
+    <button type="button" class="btn-close" aria-label="Close"
+      (click)="onClickClose()">
+    </button>
+  </div>
+  <div class="modal-body d-flex flex-column row-gap-2">
+
+    <form action="">
+      <div
+        class="modal__title-container d-inline-flex align-items-center align-items-stretch"
+        (click)="onClickTitle()">
+        <ng-container *ngIf="!isEditingTitle; else editModeTitle">
+          <h2 class="modal__title-text">{{title}}</h2>
+          <button
+            class="modal__title-icon d-flex align-items-center justify-content-center align-self-stretch">
+            <i class="bi bi-pencil-fill icon"></i>
+          </button>
+        </ng-container>
+      </div>
+
+      <ng-template #editModeTitle>
+        <input #titleInput type="text" [(ngModel)]="title" name="title"
+          class="form-control form-control-xl modal__title"
+          (blur)="onBlurTitle()">
+      </ng-template>
+    </form>
+
+    <div class="modal__select">
+      <select class="form-select" [(ngModel)]="selectedValue"
+        [ngClass]="getSelectClass()">
+        <option selected value="noStarted">未着手</option>
+        <option value="InProgress">進行中</option>
+        <option value="Completed">完了</option>
+      </select>
+    </div>
+    <div class="modal__description">
+      <h4>説明</h4>
+      <ng-container *ngIf="!isEditingDetail; else editModeDetail">
+        <p class="modal__detail" (click)="onFocusDetail()">
+          {{detail}}
+        </p>
+      </ng-container>
+
+      <ng-template #editModeDetail>
+        <textarea #detailTextarea class="form-control modal__textarea"
+          [(ngModel)]="detail" name="detail" (blur)="onBlurDetail()">
+        </textarea>
+      </ng-template>
+      <ng-container *ngIf="isEdited">
+        <div class=" modal__save-button d-flex justify-content-end gap-3">
+          <button class=" btn btn-secondary" (mousedown)="isClicking = true"
+            (mouseup)="isClicking = false"
+            (click)="onDetailEditCancel()">キャンセル</button>
+          <button class=" btn btn-primary" (mousedown)="isClicking = true"
+            (mouseup)="isClicking = false"
+            (click)="onDetailEditSave()">保存</button>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary"
+      (click)="onClickClose()">閉じる</button>
+  </div>
+</div>

@@ -13,10 +13,12 @@ erDiagram
   String(30) name
   String(50) email UK
   UserRole role
-  Boolean is_delete
+  Boolean is_deleted
   String(60) password
+  Boolean is_active
   DateTime create_at
   DateTime update_at
+  Int version
 }
 "groups" {
   String(26) id PK
@@ -25,6 +27,7 @@ erDiagram
   GroupClassification group_classification
   DateTime create_at
   DateTime update_at
+  Int version
 }
 "user_groups" {
   String user_id FK
@@ -34,6 +37,7 @@ erDiagram
   String workspace_id FK
   String group_id FK
   WorkspaceRole role
+  Int version
 }
 "workspaces" {
   String(26) id PK
@@ -43,6 +47,7 @@ erDiagram
   String(26) create_by_id
   DateTime create_at
   DateTime update_at
+  Int version
 }
 "todos" {
   String(26) id PK
@@ -55,6 +60,7 @@ erDiagram
   String(26) create_by_id FK
   DateTime create_at
   DateTime update_at
+  Int version
 }
 "user_groups" }o--|| "users" : user
 "user_groups" }o--|| "groups" : group
@@ -73,10 +79,12 @@ Properties as follows:
 - `name`: ユーザー名 *(VARCHAR(30), NOT NULL)*
 - `email`: メールアドレス *(VARCHAR(50), NOT NULL)*
 - `role`: ユーザー管理権限 *(ENUM{amdin, member}), NOT NULL)*
-- `is_delete`: 削除フラグ *(論理削除フラグ)*
+- `is_deleted`: 削除フラグ *(BOOLEAN, NOT NULL)*
 - `password`: パスワード *(VARCHAR(30), NOT NULL)*
+- `is_active`: アクティブ状態 *(BOOLEAN, NOT NULL)*
 - `create_at`: 作成日 *(TIMESTAMP WITH TIME ZONE, NOT NULL)*
 - `update_at`: 更新日 *(TIMESTAMP WITH TIME ZONE)*
+- `version`: 排他制御バージョン *(INT)*
 
 ### `groups`
 
@@ -88,6 +96,7 @@ Properties as follows:
 - `group_classification`: グループの種別 *(ENUM{private, public}), NOT NULL)*
 - `create_at`: 作成日 *(TIMESTAMP WITH TIME ZONE, NOT NULL)*
 - `update_at`: 更新日 *(TIMESTAMP WITH TIME ZONE)*
+- `version`: 排他制御バージョン *(INT)*
 
 ### `user_groups`
 
@@ -103,6 +112,7 @@ Properties as follows:
 - `workspace_id`: ワークスペースID *(CHAR(26))*
 - `group_id`: グループID *(CHAR(26))*
 - `role`: ワークスペース権限 *(enum{owner, member})*
+- `version`: 排他制御バージョン *(INT)*
 
 ### `workspaces`
 
@@ -115,6 +125,7 @@ Properties as follows:
 - `create_by_id`: 所有者のユーザーID *(CHAR(26))*
 - `create_at`: 作成日 *(TIMESTAMP WITH TIME ZONE, NOT NULL)*
 - `update_at`: 更新日 *(TIMESTAMP WITH TIME ZONE)*
+- `version`: 排他制御バージョン *(INT)*
 
 ### `todos`
 
@@ -130,3 +141,4 @@ Properties as follows:
 - `create_by_id`: 作成者のユーザーID *(CHAR(26))*
 - `create_at`: 作成日 *(TIMESTAMP WITH TIME ZONE, NOT NULL)*
 - `update_at`: 更新日 *(TIMESTAMP WITH TIME ZONE)*
+- `version`: 排他制御バージョン *(INT)*

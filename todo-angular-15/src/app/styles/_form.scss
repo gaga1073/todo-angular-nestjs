@@ -1,0 +1,9 @@
+@mixin form() {
+  border-color: $gray-500;
+}
+
+:root {
+  .danger {
+    color: var(--red-danger);
+  }
+}

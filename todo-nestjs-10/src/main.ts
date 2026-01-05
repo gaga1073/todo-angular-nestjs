@@ -1,6 +1,6 @@
 import { IncomingMessage } from 'http';
 import fastifyCookie from '@fastify/cookie';
-import { Logger as defaultLogger } from '@nestjs/common';
+import { Logger as defaultLogger, ValidationPipe } from '@nestjs/common';
 import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
@@ -38,11 +38,16 @@ async function bootstrap() {
 
   app.useGlobalInterceptors(new LoggerErrorInterceptor());
 
+  app.useGlobalPipes(new ValidationPipe({ transform: true }));
+
   const config = new DocumentBuilder()
     .setTitle('TODO API')
     .setDescription('The TODO API description')
     .setVersion('1.0')
-    .addBearerAuth()
+    .addCookieAuth('access_token', {
+      type: 'apiKey',
+      in: 'cookie',
+    })
     .build();
   const documentFactory = () => SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api/docs', app, documentFactory);

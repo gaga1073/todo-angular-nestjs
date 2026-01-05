@@ -11,7 +11,9 @@ type UserProps = {
   name: string;
   password: HashPassword;
   role: Role;
-  isDelete: boolean;
+  createAt: Date;
+  isActive: boolean;
+  isDeleted: boolean;
 };
 
 type UserCreateArgs = {
@@ -27,7 +29,9 @@ type UserRestoreArgs = {
   name: string;
   password: string;
   role: UserRoleType;
-  isDelete: boolean;
+  createAt: Date;
+  isActive: boolean;
+  isDeleted: boolean;
 };
 
 export class User extends Entity<UserId, UserProps> {
@@ -51,20 +55,32 @@ export class User extends Entity<UserId, UserProps> {
     return this.props.password;
   }
 
-  public get isDelete(): boolean {
-    return this.props.isDelete;
+  public get isDeleted(): boolean {
+    return this.props.isDeleted;
+  }
+
+  public get createAt(): Date {
+    return this.props.createAt;
+  }
+
+  public get isActive(): boolean {
+    return this.props.isActive;
   }
 
   public static create({ email, name, password, role }: UserCreateArgs): User {
     const userId = UserId.newCreate();
-    const isDelete = false;
+    const isDeleted = false;
+    const isActive = true;
+    const createAt = new Date();
 
     const entity = new User(userId, {
       email: Email.create(email),
       name,
       password: HashPassword.create(password),
       role: Role.create(role),
-      isDelete,
+      isDeleted,
+      createAt,
+      isActive,
     });
 
     entity.apply(new SampleEvent(entity));
@@ -72,13 +88,64 @@ export class User extends Entity<UserId, UserProps> {
     return entity;
   }
 
-  public static restore({ id, email, name, password, role, isDelete }: UserRestoreArgs): User {
+  public static restore({
+    id,
+    email,
+    name,
+    password,
+    role,
+    isActive,
+    createAt,
+    isDeleted,
+  }: UserRestoreArgs): User {
     return new User(UserId.create(id), {
       email: Email.create(email),
       name,
       password: HashPassword.create(password),
       role: Role.create(role),
-      isDelete,
+      isDeleted,
+      isActive,
+      createAt,
     });
+  }
+
+  public update({
+    email,
+    name,
+    password,
+    role,
+  }: {
+    email?: string;
+    name?: string;
+    password?: string;
+    role?: string;
+  }): void {
+    if (email !== undefined) {
+      this.props.email = Email.create(email);
+    }
+
+    if (name !== undefined) {
+      this.props.name = name;
+    }
+
+    if (password !== undefined) {
+      this.props.password = HashPassword.create(password);
+    }
+
+    if (role !== undefined) {
+      this.props.role = Role.create(role);
+    }
+  }
+
+  public delete(): void {
+    this.props.isDeleted = true;
+  }
+
+  public activate(): void {
+    this.props.isActive = true;
+  }
+
+  public deActivate(): void {
+    this.props.isActive = false;
   }
 }

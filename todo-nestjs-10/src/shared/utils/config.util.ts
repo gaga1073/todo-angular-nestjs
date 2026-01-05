@@ -1,10 +1,7 @@
-import { existsSync } from 'fs';
 import { IncomingMessage } from 'http';
-import { resolve } from 'path';
-import { InternalServerErrorException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Params } from 'nestjs-pino';
-import { DecodedToken } from '../types/decode-token.type';
+import { DecodedToken } from '@/shared/types/decode-token.type';
 
 interface PinoHttpRequest extends IncomingMessage {
   remoteAddress: string;
@@ -68,16 +65,4 @@ export const pinoConfig = async (jwtService: JwtService): Promise<Params> => {
       },
     },
   };
-};
-
-export const getEnvFilePath = (envFilesDirectory: string): string => {
-  const env = process.env.NODE_ENV;
-  const fileName = env ? `.env.${env}` : '.env.development';
-  const filePath = resolve(`${envFilesDirectory}/environment/${fileName}`);
-  if (!existsSync(filePath)) {
-    throw new InternalServerErrorException(
-      `Environment file "${fileName}" was not found in directory "${envFilesDirectory}".`,
-    );
-  }
-  return filePath;
 };

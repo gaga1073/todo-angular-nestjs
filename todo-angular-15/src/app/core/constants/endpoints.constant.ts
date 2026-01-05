@@ -10,10 +10,15 @@ export const getEndpoints = () => {
       refreshToken: `${environment.apiBaseUrl}/auth/refresh-token`,
       signup: `${environment.apiBaseUrl}/auth/signup`,
       logout: `${environment.apiBaseUrl}/auth/logout`,
+      me: `${environment.apiBaseUrl}/auth/me`,
     },
     user: {
-      user: `${environment.apiBaseUrl}/user`,
+      users: `${environment.apiBaseUrl}/users`,
+      search: `${environment.apiBaseUrl}/users/search`,
       sample: `${environment.apiBaseUrl}/user/sample`,
+    },
+    todo: {
+      todos: `${environment.apiBaseUrl}/todos`,
     },
   } as const;
 };

@@ -1,0 +1,77 @@
+<div class="table__container">
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>ユーザー名</th>
+        <th>メールアドレス</th>
+        <th>権限</th>
+        <th>所属グループ</th>
+        <th>作成日</th>
+        <th>アクティブ</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <ng-container *ngFor="let user of users">
+
+        <tr>
+          <td>{{user.name}}</td>
+          <td>{{user.email}}</td>
+          <td>{{user.role | userRole}}</td>
+          <td>
+            <ng-container *ngFor="let group of user.groups">
+              <span
+                class="badge rounded-pill text-bg-primary table__group-badge">
+                {{ group.name }}
+              </span>
+            </ng-container>
+          </td>
+          <td>{{user.createAt | date: 'yyyy/MM/dd'}}</td>
+          <td>
+            <ng-container *ngIf="user.isActive; else noActive">
+              <span class="badge rounded-pill text-bg-success">
+                {{user.isActive | userActivationPipe}}
+              </span>
+            </ng-container>
+            <ng-template #noActive>
+              <span class="badge rounded-pill text-bg-danger">
+                {{user.isActive | userActivationPipe}}
+              </span>
+            </ng-template>
+          </td>
+          <td>
+            <div class="btn-group" dropdown>
+              <div id="button-basic" dropdownToggle type="button"
+                class="btn table__action-btn" aria-controls="dropdown-basic">
+                <i class="bi bi-three-dots-vertical"></i>
+              </div>
+              <ul id="dropdown-basic" *dropdownMenu
+                class="dropdown-menu dropdown-menu-end" role="menu"
+                aria-labelledby="button-basic">
+                <li role="menuitem">
+                  <div class="dropdown-item" type="button">
+                    <i class="bi bi-pencil me-2"></i>
+                    編集
+                  </div>
+                </li>
+                <li role="menuitem">
+                  <div class="dropdown-item" type="button">
+                    <i class="bi bi-trash3 me-2"></i>
+                    削除
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </td>
+        </tr>
+      </ng-container>
+    </tbody>
+  </table>
+  <div>
+    <pagination class="d-flex justify-content-end" [(ngModel)]="currentPage"
+      [boundaryLinks]="true" [totalItems]="totalItems"
+      (pageChanged)="onPageChanged($event)" previousText="&lsaquo;"
+      nextText="&rsaquo;" firstText="&laquo;" lastText="&raquo;">
+    </pagination>
+  </div>
+</div>

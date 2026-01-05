@@ -9,9 +9,6 @@ import { BsModalRef } from 'ngx-bootstrap/modal';
 export class ModalComponent {
   constructor(private bsModalRef: BsModalRef) {}
 
-  modalType!: 'OK' | 'COMFIRM';
-  config!: { title: string };
-
   onClose() {
     this.bsModalRef.hide();
   }

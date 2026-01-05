@@ -1,0 +1,72 @@
+:host {
+  .table__container {
+    table {
+      table-layout: fixed;
+      td {
+        vertical-align: middle;
+
+        button {
+          margin-right: 1rem;
+          font-size: 0.8rem;
+        }
+      }
+
+      td {
+        padding-block: 0.5rem;
+      }
+
+      th:nth-child(1),
+      td:nth-child(1) {
+        width: 15%;
+      } // ユーザー名
+      th:nth-child(2),
+      td:nth-child(2) {
+        width: 20%;
+      } // メールアドレス
+      th:nth-child(3),
+      td:nth-child(3) {
+        width: 15%;
+      } // ユーザー権限
+      th:nth-child(4),
+      td:nth-child(4) {
+        width: 20%;
+      } // 所属グループ
+      th:nth-child(5),
+      td:nth-child(5) {
+        width: 12%;
+      } // 作成日
+      th:nth-child(6),
+      td:nth-child(6) {
+        width: 14%;
+      } // アクティブ
+      th:nth-child(7),
+      td:nth-child(7) {
+        width: 4%;
+      } // メニュー
+    }
+
+    .table__menu-icon {
+      cursor: pointer;
+    }
+
+    .table__group-badge {
+      margin-inline: 0.5rem;
+    }
+
+    .table__action-btn {
+      margin-inline: 0.3rem;
+      padding: 0.2rem;
+    }
+
+    .table__action-btn:hover {
+      background-color: var(--gray-100);
+      border-radius: var(--bs-border-radius);
+    }
+
+    .table__action-btn:active {
+      background-color: var(--gray-200);
+      border-color: var(--gray-400);
+      border-radius: var(--bs-border-radius);
+    }
+  }
+}

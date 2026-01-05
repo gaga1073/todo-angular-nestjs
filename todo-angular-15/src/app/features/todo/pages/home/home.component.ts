@@ -1,8 +1,8 @@
-import { HttpClient } from '@angular/common/http';
 import { Component, inject, OnInit } from '@angular/core';
+import { HomeService } from '@/features/todo/services/home.service';
+import { Todo } from '@/core/types/home-response.type';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { getEndpoints } from '@/core/constants/endpoints.constant';
-import { ModalService } from '@/shared/modal/modal.service';
+import { LoadingService } from '@/shared/loading/loading.service';
 
 type ExampleAlertType = { type: string; msg: string };
 @Component({
@@ -11,11 +11,10 @@ type ExampleAlertType = { type: string; msg: string };
   styleUrls: ['./home.component.scss'],
 })
 export class HomeComponent implements OnInit {
-  private readonly modalService = inject(ModalService);
+  private readonly homeService = inject(HomeService);
+  private readonly loadingService = inject(LoadingService);
 
-  private readonly httpClient = inject(HttpClient);
-
-  private readonly endpoint = getEndpoints();
+  todos: Todo[] = [];
 
   bsModalRef?: BsModalRef;
 
@@ -37,22 +36,15 @@ export class HomeComponent implements OnInit {
   alerts = this.defaultAlerts;
 
   ngOnInit(): void {
-    this.httpClient.get<any>(this.endpoint.user.user).subscribe({
-      next: (res) => {
-        console.log(res);
+    this.loadingService.show({ size: 'lg' });
+    this.homeService.getTodos().subscribe({
+      next: (todos) => {
+        this.todos = todos;
+        this.loadingService.hide();
       },
       error: (err) => {
-        console.error(err);
-        throw new Error(err);
-      },
-    });
-    this.httpClient.get<any>(this.endpoint.user.sample).subscribe({
-      next: (res) => {
-        console.log(res);
-      },
-      error: (err) => {
-        console.error(err);
-        throw new Error(err);
+        this.loadingService.hide();
+        throw err;
       },
     });
   }
@@ -63,9 +55,5 @@ export class HomeComponent implements OnInit {
 
   onClosed(dismissedAlert: ExampleAlertType): void {
     this.alerts = this.alerts.filter((alert) => alert !== dismissedAlert);
-  }
-
-  onModal(): void {
-    this.modalService.openConfirmModal();
   }
 }

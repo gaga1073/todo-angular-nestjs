@@ -1,0 +1,124 @@
+.modal-dialog {
+  width: 800px;
+}
+
+:host {
+  .modal__container {
+    // padding-top: var(--spacing-md);
+    // padding-inline: var(--spacing-xl);
+    // padding-bottom: var(--spacing-xl);
+  }
+
+  .modal-body {
+    padding-inline: var(--spacing-lg);
+  }
+
+  select {
+    width: 8rem;
+    option {
+      background-color: var(--white);
+      color: var(--black);
+    }
+  }
+
+  .modal__title {
+    padding-inline: var(--spacing-sm);
+  }
+
+  .modal__title-container:hover {
+    .modal__title-text {
+      border-left: solid 0.1rem;
+      border-top: solid 0.1rem;
+      border-bottom: solid 0.1rem;
+      border-color: var(--bs-border-color);
+      border-radius: 0.5rem 0 0 0.5rem;
+    }
+    .modal__title-icon {
+      cursor: pointer;
+      border-right: solid 0.1rem;
+      border-top: solid 0.1rem;
+      border-bottom: solid 0.1rem;
+      border-color: var(--bs-border-color);
+      border-radius: 0 0.5rem 0.5rem 0;
+
+      background-color: var(--gray-100);
+    }
+  }
+
+  .modal__title-text {
+    margin-bottom: 0;
+    padding-block: 0;
+  }
+
+  .modal__title-icon {
+    cursor: pointer;
+    border: none;
+    background-color: var(--white);
+  }
+
+  .icon {
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--gray-600);
+
+    margin-inline: 0.2rem;
+  }
+
+  .custom-input {
+    border: none;
+    box-shadow: none;
+    background-color: transparent;
+  }
+
+  .custom-textarea {
+    // border: none;
+    box-shadow: none;
+    background-color: transparent;
+  }
+
+  .modal__description {
+    margin-top: var(--spacing-md);
+    // padding-inline: var(--spacing-sm);
+  }
+
+  .form-control-xl {
+    font-weight: 700;
+    font-size: xx-large; /* 文字サイズ */
+    line-height: 1.5; /* 行の高さ */
+    height: auto; /* 高さ固定を防ぐ */
+  }
+
+  .modal__no-starteds-subtle {
+    background-color: var(--gray-400);
+    color: var(--white);
+  }
+
+  .modal__in-progress-subtle {
+    background-color: var(--primary-500);
+    color: var(--white);
+  }
+
+  .modal__completed-subtle {
+    background-color: var(--green-500);
+    color: var(--white);
+  }
+
+  .modal__detail {
+    border: solid 0.1rem;
+    border-color: var(--bs-border-color);
+    border-radius: 0.5rem;
+    white-space: pre-wrap;
+    padding: var(--spacing-sm);
+    height: 300px;
+  }
+
+  .modal__textarea {
+    height: 300px;
+    resize: none;
+    margin-bottom: var(--spacing-md);
+  }
+
+  .modal__save-button {
+    margin-inline: var(--spacing-md);
+  }
+}

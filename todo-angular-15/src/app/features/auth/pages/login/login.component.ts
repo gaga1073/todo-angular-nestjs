@@ -5,7 +5,6 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { BehaviorSubject } from 'rxjs';
 import { AuthenticationService } from '@/features/auth/services/authentication.service';
-import { User } from '@/features/auth/types/user.type';
 import { LoadingService } from '@/shared/loading/loading.service';
 
 @Component({
@@ -37,7 +36,7 @@ export class LoginComponent {
       return;
     }
     this.authenticationService.login(this.loginForm.getRawValue()).subscribe({
-      next: (user: User) => {
+      next: () => {
         this.loadingService.hide();
         this.router.navigateByUrl(TODO_URLs.home);
         return;

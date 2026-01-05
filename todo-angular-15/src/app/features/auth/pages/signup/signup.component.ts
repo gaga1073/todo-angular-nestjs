@@ -1,6 +1,5 @@
 import { AUTHENTICATION_URLs } from '@/core/constants/path.constant';
 import { passwordMatchValidator } from '@/core/validators/passwordMatchValidator';
-import { ModalComponent } from '@/shared/modal/modal.component';
 import { ToastService } from '@/shared/toast/toast.service';
 import { Component, inject } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
@@ -8,6 +7,7 @@ import { Router } from '@angular/router';
 import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
 import { AuthenticationService } from '@/features/auth/services/authentication.service';
 import { LoadingService } from '@/shared/loading/loading.service';
+import { DialogService } from '@/shared/dialog/dialog.service';
 
 @Component({
   selector: 'app-signup',
@@ -19,6 +19,7 @@ export class SignupComponent {
   private router = inject(Router);
   private readonly toastService = inject(ToastService);
   private readonly bsModalService = inject(BsModalService);
+  private readonly dialogService = inject(DialogService);
 
   private readonly loadingService = inject(LoadingService);
 
@@ -49,11 +50,12 @@ export class SignupComponent {
 
     this.authenticationService.signup(this.signupForm.getRawValue()).subscribe({
       next: () => {
-        this.bsModalRef = this.bsModalService.show(ModalComponent, {
-          class: 'modal-dialog-centered',
-        });
+        this.bsModalRef = this.dialogService.openConfirmDialog('ユーザー登録が成功しました。');
         this.loadingService.hide();
-        this.router.navigateByUrl(AUTHENTICATION_URLs.login);
+
+        this.bsModalRef.onHidden?.subscribe(() => {
+          this.router.navigateByUrl(AUTHENTICATION_URLs.login);
+        });
       },
       error: () => {
         this.loadingService.hide();

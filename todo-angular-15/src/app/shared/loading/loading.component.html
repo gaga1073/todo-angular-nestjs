@@ -1,4 +1,8 @@
 <div *ngIf="loading$ | async" class="loading-overlay"
   [class.show]="loading$ | async">
-  <div class="spinner-border text-primary"></div>
+  <div class="spinner-border text-primary" [ngClass]="{
+    'loading-size-lg ': (this.size$ | async) === 'lg',
+    'loading-size-md': (this.size$ | async) === 'md',
+    'loading-size-sm': (this.size$ | async) === 'sm',
+  }"></div>
 </div>

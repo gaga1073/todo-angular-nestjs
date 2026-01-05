@@ -1,0 +1,8 @@
+<div class="user-list__container">
+  <h1 class="heading-page-title">ユーザーリスト</h1>
+  <div class="d-flex flex-column gap-4">
+    <app-search-area (pageSearch)="handleSearch($event)"></app-search-area>
+    <app-table [users]="users" [totalItems]="totalItems"
+      (pageChanged)="handlePageChanged($event)"></app-table>
+  </div>
+</div>

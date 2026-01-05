@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
@@ -11,6 +11,7 @@ import { SharedModule } from '@/shared/shared.module';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { AuthenticationInterceptor } from './core/interceptors/authentication.interceptor';
 import { environment } from '@/environments/environment';
+import { AuthenticationService } from './features/auth/services/authentication.service';
 
 @NgModule({
   declarations: [AppComponent],
@@ -31,6 +32,14 @@ import { environment } from '@/environments/environment';
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthenticationInterceptor,
+      multi: true,
+    },
+    {
+      provide: APP_INITIALIZER,
+      useFactory: (auth: AuthenticationService) => {
+        return () => auth.initialize();
+      },
+      deps: [AuthenticationService],
       multi: true,
     },
   ],

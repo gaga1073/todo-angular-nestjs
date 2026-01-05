@@ -11,7 +11,7 @@ export const seedUser = async (prisma: PrismaClient): Promise<void> => {
         password: '$2b$10$CVm2AnvS5xMXv1XT5QuIxOLy2lIdsmt7HQphRA8/MeLdXTb7H2JAO',
         createAt: new Date('2025-09-09T12:00:00+09:00'),
         updateAt: new Date('2025-09-09T12:00:00+09:00'),
-        isDelete: false,
+        isDeleted: false,
       },
       {
         id: '01K4QB1SM3FQSZ38DG1VTWSWD9',
@@ -21,7 +21,7 @@ export const seedUser = async (prisma: PrismaClient): Promise<void> => {
         password: '$2b$10$CVm2AnvS5xMXv1XT5QuIxOLy2lIdsmt7HQphRA8/MeLdXTb7H2JAO',
         createAt: new Date('2025-09-09T12:00:00+09:00'),
         updateAt: new Date('2025-09-09T12:00:00+09:00'),
-        isDelete: false,
+        isDeleted: false,
       },
       {
         id: '01K4QD7FP0VK1ABEFHTK6P44BT',
@@ -31,7 +31,7 @@ export const seedUser = async (prisma: PrismaClient): Promise<void> => {
         password: '$2b$10$CVm2AnvS5xMXv1XT5QuIxOLy2lIdsmt7HQphRA8/MeLdXTb7H2JAO',
         createAt: new Date('2025-09-09T12:00:00+09:00'),
         updateAt: new Date('2025-09-09T12:00:00+09:00'),
-        isDelete: false,
+        isDeleted: false,
       },
     ],
   });

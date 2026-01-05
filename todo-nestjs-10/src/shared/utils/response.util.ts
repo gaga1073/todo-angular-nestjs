@@ -1,18 +1,34 @@
 import { FastifyReply } from 'fastify';
-import { jwtToken, path } from '../constants/common.constant';
+import { JWT_TOKEN } from '@/shared/constants/common.constant';
 
-export const setRefreshTokenToHttpOnlyCookie = (reply: FastifyReply, token: string): void => {
-  reply.setCookie(jwtToken.REFRESH_TOKEN_KEY, token, {
+export function setRefreshTokenToHttpOnlyCookie(reply: FastifyReply, token: string): void {
+  reply.setCookie(JWT_TOKEN.refreshTokenKey, token, {
     httpOnly: true,
-    path: `${path.BASE_URL}/auth/`,
+    path: `/api/auth`,
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7d
-    sameSite: 'none',
-    secure: true,
+    sameSite: 'lax',
+    secure: false,
   });
-};
+}
 
-export const terminateRefreshTokenHttpOnlyCookie = (reply: FastifyReply): void => {
-  reply.clearCookie(jwtToken.REFRESH_TOKEN_KEY, {
-    path: `${path.BASE_URL}/auth/`,
+export function setAccessTokenToHttpOnlyCookie(reply: FastifyReply, token: string): void {
+  reply.setCookie(JWT_TOKEN.accessTokenKey, token, {
+    httpOnly: false,
+    path: '/',
+    maxAge: 7 * 24 * 60 * 60 * 1000, // 7d
+    sameSite: 'lax',
+    secure: false,
   });
-};
+}
+
+export function terminateRefreshTokenHttpOnlyCookie(reply: FastifyReply): void {
+  reply.clearCookie(JWT_TOKEN.refreshTokenKey, {
+    path: `/auth`,
+  });
+}
+
+export function terminateAccessTokenCookie(reply: FastifyReply): void {
+  reply.clearCookie(JWT_TOKEN.accessTokenKey, {
+    path: '/',
+  });
+}

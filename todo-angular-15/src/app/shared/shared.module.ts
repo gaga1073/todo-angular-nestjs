@@ -3,12 +3,20 @@ import { CommonModule } from '@angular/common';
 import { HeaderComponent } from './header/header.component';
 import { ToastComponent } from './toast/toast.component';
 import { AlertModule } from 'ngx-bootstrap/alert';
-import { ModalComponent } from './modal/modal.component';
+import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
+import { DialogComponent } from './dialog/dialog.component';
 import { LoadingComponent } from './loading/loading.component';
+import { ModalComponent } from './modal/modal.component';
 
 @NgModule({
-  declarations: [HeaderComponent, ToastComponent, ModalComponent, LoadingComponent],
-  imports: [CommonModule, AlertModule],
+  declarations: [
+    HeaderComponent,
+    ToastComponent,
+    DialogComponent,
+    LoadingComponent,
+    ModalComponent,
+  ],
+  imports: [CommonModule, AlertModule, BsDropdownModule],
   exports: [HeaderComponent, ToastComponent, LoadingComponent],
 })
 export class SharedModule {}

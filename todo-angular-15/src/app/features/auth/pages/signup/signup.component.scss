@@ -1,13 +1,11 @@
 @use 'styles/page';
 
-@import 'bootstrap/scss/bootstrap';
-
 :host {
   @include page.read-page();
 
   .signup__container {
-    border: 1px solid $gray-400;
-    background-color: $white;
+    border: 1px solid var(--gray-400);
+    background-color: var(--white);
 
     .signup__return-btn {
       margin-top: 0.2rem;
@@ -15,41 +13,12 @@
     }
 
     .signup__form-container {
-      padding: 0rem 3rem 2rem 3rem;
-
-      .signup__title-wrapper {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin-bottom: 2rem;
-
-        .signup__title {
-          font-weight: $font-weight-medium;
-        }
-      }
+      // padding: 0rem 3rem 2rem 3rem;
+      padding-inline: var(--spacing-2xl);
+      padding-bottom: var(--spacing-lg);
 
       .signup__input-wrapper {
-        margin-bottom: 1.5rem;
-
-        .danger {
-          color: $danger !important;
-        }
-      }
-
-      .signup__button-wrapper {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin-top: 2.5rem;
-
-        button {
-          margin-right: 2rem;
-        }
-      }
-
-      .signup__footer {
-        text-align: center;
-        margin-top: 2rem;
+        margin-bottom: var(--spacing-lg);
       }
     }
   }

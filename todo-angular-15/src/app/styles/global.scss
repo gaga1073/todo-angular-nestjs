@@ -1,0 +1,10 @@
+@use 'styles/spacing';
+@use 'styles/headings';
+@use 'styles/color';
+@use 'styles/typography';
+@use 'styles/form';
+@use 'styles/buttons';
+@use 'styles/table';
+
+@include headings.headings();
+@include typography.typography();

@@ -1,0 +1,160 @@
+@startuml TODO
+
+package UserAggregate as "ユーザー集約" {
+
+  class User as "User" << (R,red) RootEntity >> {
+    id: UserId
+    email: string
+    name: string
+    role: Role
+    password: string
+    isDelete: boolean
+    privateGroup: Group
+  }
+
+  class Role as "Role" << (V,lightblue) >> {
+    + value: Enum {admin, member}
+  }
+
+  class UserId as "UserId" << (V,lightblue) >> {
+    + value: string
+  }
+
+  class privateGroup as "privateGroup" << (E,lightgreen) >> {
+    id: GroupId
+    name: string
+    privateWorkspace
+  }
+
+  class privateWorkspace as "privateWorkspace" << (E,lightgreen) >> {
+    id: WorkspaceId
+    name: string
+    todos: Todo[]
+  }
+
+  User *-- Role
+  User *-- UserId
+  User "1" -- "1" privateGroup
+  privateGroup "1" -- "1" privateWorkspace
+}
+
+note top of UserAggregate
+  emailは一意だが削除済みユーザーのemailは使用可能
+  
+end note
+
+package GroupAggreate as "グループ集約" {
+
+  class Group as "Group" << (R,red) RootEntity >> {
+    id: GroupId
+    name: string
+    description: string | undefined
+    groupClassification: GroupClassification
+    members: GroupMember[]
+  }
+
+
+  class GroupId as "GroupId" << (V,lightblue) >> {
+    + value: string
+  }
+
+  class GroupMembers as "GroupMembers"  << (V,lightblue) >>  {
+    userId: UserId
+  }
+
+  class GroupClassification as "GroupClassification" << (V,lightblue) >> {
+    + value: Enum {private | public }
+  }
+
+  Group *-- GroupId
+  Group "1" -- "n" GroupMembers
+  Group *-- GroupClassification
+
+
+
+}
+
+note top of GroupAggreate
+  最低1人の owner が存在
+  同じユーザーは同じグループ内に一意
+end note
+
+
+package WorkspaceAggreate as "ワークスペース集約" {
+
+  class Workspace  as "Workspace" << (R,red) RootEntity >> {
+    id: WorkspaceId
+    name: string
+    description: string
+    createById: UserId
+    todo: Todo[]
+  }
+
+  class WorkspaceId as "WorkspaceId" << (V,lightblue) >> {
+    + value: string
+  }
+
+  
+  class WorkspaceGroupMemberships as "WorkspaceGroupMemberships" << (V,lightblue) >> {
+    usergroupId: GroupId
+    workspaceRole: WorkspaceRole
+  }
+
+
+  class WorkspaceRole << (V,lightblue) >> {
+    + value: Enum {owner, , viewer}
+  }
+
+  Workspace *-- WorkspaceId
+  Workspace *-- WorkspaceGroupMemberships
+  WorkspaceGroupMemberships *-- WorkspaceRole
+
+}
+
+note Top of WorkspaceAggreate
+  ownerId は必須
+  グループワークスペースなら groupId 必須
+  個人ワークスペースは groupId = null
+end note
+
+
+package TodoAggreate as "Todo集約" {
+
+  class Todo as "Todo" << (R,red) RootEntity >> {
+    id: TodoId
+    workspaceId: WorkspaceId
+    title: string
+    description?: string
+    status: TodoStatus
+    dueDate: Date
+    assigneeId?: UserId
+    createdBy: UserId
+  }
+
+  class TodoId as "TodoId" << (V,lightblue) >> {
+    + value: string
+  }
+
+  class TodoStatus as "TodoStatus" << (V,lightblue) >> {
+    + value: 未着手, 進行中, 完了
+  }
+
+  Todo *-- TodoId
+  Todo *-- TodoStatus
+
+}
+
+note top of TodoAggreate
+  assigneeId は workspace 所属ユーザーに限定
+  個人ワークスペースの場合、assigneeId === ownerId でなければならない
+end note
+
+
+' GroupMembers .. UserId
+' Workspace .. UserId
+' Workspace .. GroupId
+' Todo .. WorkspaceAggreate.WorkspaceId
+' Todo .right. UserId
+' UserId .up. Todo
+
+@enduml

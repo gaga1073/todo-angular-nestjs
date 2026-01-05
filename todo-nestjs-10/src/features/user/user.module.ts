@@ -7,6 +7,7 @@ import { UserQueryService } from '@/features/user/application/services/user-quer
 import { UserController } from '@/features/user/controllers/user.controller';
 import { IUserRepositoryToken } from '@/features/user/domain/repositories/user-repository.interface';
 import { EmailDuplicationCheckDomainService } from '@/features/user/domain/services/email-duplication-check-domain.service';
+import { ValidateDeleteUserService } from '@/features/user/domain/services/validate-delete-user.service';
 import { UserRepository } from '@/features/user/infrastructures/repositories/user.repository';
 
 @Module({
@@ -16,6 +17,7 @@ import { UserRepository } from '@/features/user/infrastructures/repositories/use
     UserQueryService,
     UserCommandService,
     EmailDuplicationCheckDomainService,
+    ValidateDeleteUserService,
     {
       provide: IUserRepositoryToken,
       useClass: UserRepository,

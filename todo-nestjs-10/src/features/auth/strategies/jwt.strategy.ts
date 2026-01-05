@@ -1,15 +1,16 @@
-import { Injectable, InternalServerErrorException, UnauthorizedException } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
-import { ExtractJwt, Strategy } from 'passport-jwt';
-import { DecodedToken } from '@/shared/types/decode-token.type';
+import { FastifyRequest } from 'fastify';
+import { Strategy } from 'passport-jwt';
 import { UserDto } from '@/features/auth/dto/login.response';
 import { UserQueryService } from '@/features/user/application/services/user-query.service';
+import { DecodedToken } from '@/shared/types/decode-token.type';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy, 'access-token-jwt') {
   constructor(private readonly userQueryService: UserQueryService) {
     super({
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      jwtFromRequest: (req: FastifyRequest) => req?.cookies?.['access_token'] ?? null,
       ignoreExpiration: false,
       secretOrKey: 'MY_SUPER_SECRET_KEY',
     });
@@ -25,7 +26,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'access-token-jwt') 
 
       return user;
     } catch (error) {
-      throw new InternalServerErrorException(error);
+      throw new UnauthorizedException(error);
     }
   }
 }

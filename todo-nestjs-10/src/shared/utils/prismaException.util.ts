@@ -1,7 +1,7 @@
 import { ConflictException, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
-export const handlePrismaError = (error: unknown): never => {
+export function handlePrismaError(error: unknown): never {
   if (error instanceof PrismaClientKnownRequestError) {
     const { code } = error;
     switch (code) {
@@ -15,4 +15,4 @@ export const handlePrismaError = (error: unknown): never => {
   }
 
   throw new InternalServerErrorException('An unexpected database error occurred');
-};
+}

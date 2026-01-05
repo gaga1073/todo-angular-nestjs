@@ -1,0 +1,8 @@
+{
+  "/api": {
+    "target": "http://backend-todo-angular15-nestjs10:3000",
+    "changeOrigin": true,
+    "secure": false,
+    "logLevel": "debug"
+  }
+}

@@ -11,18 +11,10 @@ export class ModalService {
   private readonly bsModalService = inject(BsModalService);
 
   openConfirmModal(): void {
-    const initialState = {
-      config: {
-        title: 'アカウント作成完了',
-        type: 'OK',
-      },
-    };
-
     this.bsModalRef = this.bsModalService.show(ModalComponent, {
-      initialState,
       animated: true,
       backdrop: 'static',
-      class: 'modal-md',
+      class: 'modal-dialog-centered',
     });
   }
 }

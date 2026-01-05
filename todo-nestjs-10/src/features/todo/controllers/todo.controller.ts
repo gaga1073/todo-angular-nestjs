@@ -1,19 +1,23 @@
-import { Controller, Get, HttpCode } from '@nestjs/common';
+import { Controller, Get, HttpCode, UseGuards } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
+  ApiCookieAuth,
   ApiInternalServerErrorResponse,
   ApiOkResponse,
   ApiOperation,
-  ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { AppLoggerFactory } from '@/shared/providers/app-logger.factory';
-import { AppLogger } from '@/shared/utils/app-logger.util';
 import { GetTodosResponse } from '@/features/todo/dto/response/get-todos.response';
 import { TodoQueryService } from '@/features/todo/services/todo-query.service';
+import { JwtAuthGuard } from '@/shared/guards/jwt-auth.guard';
+import { UserRolesGuard } from '@/shared/guards/user-role.guard';
+import { AppLoggerFactory } from '@/shared/providers/app-logger.factory';
+import { AppLogger } from '@/shared/utils/app-logger.util';
 
 @Controller('/todos')
 @ApiTags('Todo')
+@ApiCookieAuth('access_token')
+@UseGuards(JwtAuthGuard, UserRolesGuard)
 @ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
 export class TodoController {
   private appLogger: AppLogger;
@@ -31,8 +35,7 @@ export class TodoController {
     summary: `TODO一覧取得`,
     description: `TODOの一覧を取得します`,
   })
-  @ApiResponse({ type: GetTodosResponse })
-  @ApiOkResponse({ description: 'Success' })
+  @ApiOkResponse({ description: 'Success', type: GetTodosResponse })
   @ApiBadRequestResponse({ description: 'Bad Request' })
   public async getTodos(): Promise<GetTodosResponse> {
     this.appLogger.info('[GET] /todos is invoked', { method: this.getTodos.name });

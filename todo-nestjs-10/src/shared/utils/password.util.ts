@@ -1,10 +1,7 @@
 import { UnauthorizedException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 
-export const comparePassword = async (
-  password: string,
-  hashedPassword: string,
-): Promise<boolean> => {
+export async function comparePassword(password: string, hashedPassword: string): Promise<boolean> {
   try {
     const match = await bcrypt.compare(password, hashedPassword);
 
@@ -16,8 +13,8 @@ export const comparePassword = async (
   } catch (error) {
     throw error;
   }
-};
+}
 
-export const hashPassword = async (password: string): Promise<string> => {
+export async function hashPassword(password: string): Promise<string> {
   return await bcrypt.hash(password, 10);
-};
+}

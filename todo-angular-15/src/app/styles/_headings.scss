@@ -1,0 +1,5 @@
+@mixin headings() {
+  .heading-page-title {
+    margin-block-end: var(--spacing-lg);
+  }
+}

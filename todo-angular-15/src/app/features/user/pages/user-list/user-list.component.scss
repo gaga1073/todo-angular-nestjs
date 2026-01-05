@@ -1,0 +1,11 @@
+@use 'styles/page';
+
+:host {
+  .user-list__container {
+    @include page.main-page();
+  }
+
+  .user-list__contents {
+    
+  }
+}

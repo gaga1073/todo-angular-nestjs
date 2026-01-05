@@ -7,8 +7,8 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { FastifyRequest } from 'fastify';
-import { UserRoleType } from '@/shared/constants/management.constant';
 import { User } from '@/features/user/domain/entities/user';
+import { UserRoleType } from '@/shared/constants/management.constant';
 
 @Injectable()
 export class UserRolesGuard implements CanActivate {

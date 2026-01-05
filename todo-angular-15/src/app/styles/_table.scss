@@ -1,0 +1,23 @@
+.pagination {
+  --bs-pagination-color: var(--primary-main);
+  --bs-pagination-bg: var(--white);
+  --bs-pagination-border-color: var(--gray-300);
+
+  --bs-pagination-hover-color: var(--primary-600);
+  --bs-pagination-hover-bg: var(--primary-200);
+  --bs-pagination-hover-border-color: var(--primary-300);
+
+  --bs-pagination-active-color: var(--white);
+  --bs-pagination-active-bg: var(--primary-main);
+  --bs-pagination-active-border-color: var(--primary-main);
+
+  --bs-pagination-disabled-color: var(--gray-400);
+  --bs-pagination-disabled-bg: var(--gray-100);
+  --bs-pagination-disabled-border-color: var(--gray-200);
+}
+
+.pagination .page-link:focus,
+.pagination .page-link:active,
+.pagination .page-link:hover {
+  text-decoration: underline;
+}

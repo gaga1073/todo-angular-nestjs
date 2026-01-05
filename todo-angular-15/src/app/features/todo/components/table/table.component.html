@@ -1,0 +1,37 @@
+<div class="home__container">
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>タイトル</th>
+        <th>ステータス</th>
+        <th>担当者</th>
+        <th>作成者</th>
+        <th>期限</th>
+        <th>操作</th>
+      </tr>
+    </thead>
+    <tbody>
+      <ng-container *ngFor="let todo of pagedTodos">
+        <tr>
+          <td>{{todo.title}}</td>
+          <td>{{mappingStatus(todo.status)}}</td>
+          <td>{{todo.assignee.name}}</td>
+          <td>{{todo.createBy.name}}</td>
+          <td>{{todo.dueDate | date: 'yyyy/MM/dd'}}</td>
+          <td>
+            <button class="btn ink-reaction btn-primary"
+              (click)="onDetailClick(todo)">詳細</button>
+            <button class="btn ink-reaction btn-danger">削除</button>
+          </td>
+        </tr>
+      </ng-container>
+    </tbody>
+  </table>
+  <div>
+    <pagination class="d-flex justify-content-end" [(ngModel)]="currentPage"
+      [boundaryLinks]="true" [totalItems]="todos.length"
+      (pageChanged)="onPageChanged($event)" previousText="&lsaquo;"
+      nextText="&rsaquo;" firstText="&laquo;" lastText="&raquo;">
+    </pagination>
+  </div>
+</div>

@@ -9,25 +9,24 @@ import {
 import { BehaviorSubject, catchError, filter, Observable, switchMap, take, throwError } from 'rxjs';
 import { AuthenticationService } from '@/features/auth/services/authentication.service';
 import { Router } from '@angular/router';
-import { ACCESS_TOKEN_KEY } from '@/core/constants/common';
-import { SessionStorageService } from '@/core/services/session-storage.service';
 
 @Injectable()
 export class AuthenticationInterceptor implements HttpInterceptor {
-  private readonly sessionStorageService = inject(SessionStorageService);
   private readonly authenticationService = inject(AuthenticationService);
   private readonly router = inject(Router);
 
-  private isRefreshing = new BehaviorSubject<boolean>(false);
+  private readonly isRefreshing = new BehaviorSubject<boolean>(false);
 
   /**
    * インターセプター関数
    */
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
-    const clonedRequest = this.attachAccessToken(request);
+    // const clonedRequest = this.attachAccessToken(request);
+
+    const router = inject(Router);
 
     return this.handleRequest({
-      request: clonedRequest,
+      request: request,
       next: next,
     });
   }
@@ -35,15 +34,15 @@ export class AuthenticationInterceptor implements HttpInterceptor {
   /**
    * セッションストレージにアクセストークンを保存
    */
-  private attachAccessToken(request: HttpRequest<unknown>): HttpRequest<unknown> {
-    const accessToken = this.sessionStorageService?.getItem(ACCESS_TOKEN_KEY);
-    if (accessToken) {
-      return request.clone({
-        setHeaders: { Authorization: `Bearer ${accessToken}` },
-      });
-    }
-    return request;
-  }
+  // private attachAccessToken(request: HttpRequest<unknown>): HttpRequest<unknown> {
+  //   const accessToken = this.sessionStorageService?.getItem(ACCESS_TOKEN_KEY);
+  //   if (accessToken) {
+  //     return request.clone({
+  //       setHeaders: { Authorization: `Bearer ${accessToken}` },
+  //     });
+  //   }
+  //   return request;
+  // }
 
   /**
    * リクエストのハンドラー
@@ -55,6 +54,10 @@ export class AuthenticationInterceptor implements HttpInterceptor {
     return parameters.next.handle(parameters.request).pipe(
       catchError((errorResponse: HttpErrorResponse) => {
         if (parameters.request.url.includes('/auth/refresh-token')) {
+          return throwError(() => errorResponse);
+        }
+
+        if (parameters.request.url.includes('/auth/me')) {
           return throwError(() => errorResponse);
         }
 
@@ -82,10 +85,13 @@ export class AuthenticationInterceptor implements HttpInterceptor {
     return this.authenticationService.refreshToken().pipe(
       switchMap(() => {
         this.isRefreshing.next(false);
-        return this.retryRequestWithRefreshedToken(parameters);
+        this.authenticationService.setIsLogin(true);
+        // return this.retryRequestWithRefreshedToken(parameters);
+        return parameters.next.handle(parameters.request);
       }),
       catchError((error: HttpErrorResponse) => {
         this.isRefreshing.next(false);
+        this.authenticationService.setIsLogin(false);
         return throwError(() => error);
       }),
     );
@@ -102,7 +108,7 @@ export class AuthenticationInterceptor implements HttpInterceptor {
     return this.isRefreshing.pipe(
       filter((refreshing) => !refreshing),
       take(1),
-      switchMap(() => this.retryRequestWithRefreshedToken(parameters)),
+      switchMap(() => parameters.next.handle(parameters.request)),
     );
   }
 
@@ -110,17 +116,17 @@ export class AuthenticationInterceptor implements HttpInterceptor {
    * リトライ処理
    * 元々のリクエストオブジェクトに新しいアクセストークンを付与して複製
    * 複製後のリクエストを返却
-   */
-  private retryRequestWithRefreshedToken(parameters: {
-    request: HttpRequest<unknown>;
-    next: HttpHandler;
-  }): Observable<HttpEvent<unknown>> {
-    const refreshedToken = this.sessionStorageService.getItem(ACCESS_TOKEN_KEY);
-    const clonedRequest = refreshedToken
-      ? parameters.request.clone({
-          setHeaders: { Authorization: `Bearer ${refreshedToken}` },
-        })
-      : parameters.request;
-    return parameters.next.handle(clonedRequest);
-  }
+  //  */
+  // private retryRequestWithRefreshedToken(parameters: {
+  //   request: HttpRequest<unknown>;
+  //   next: HttpHandler;
+  // }): Observable<HttpEvent<unknown>> {
+  //   const refreshedToken = this.sessionStorageService.getItem(ACCESS_TOKEN_KEY);
+  //   const clonedRequest = refreshedToken
+  //     ? parameters.request.clone({
+  //         setHeaders: { Authorization: `Bearer ${refreshedToken}` },
+  //       })
+  //     : parameters.request;
+  //   return parameters.next.handle(clonedRequest);
+  // }
 }
