@@ -34,4 +34,18 @@ export class ApiService {
       ...options,
     });
   }
+
+  patch<Input, Output>(
+    url: string,
+    body: Input,
+    options?: {
+      headers?: HttpHeaders;
+      params?: HttpParams;
+    },
+  ): Observable<Output> {
+    return this.httpClient.patch<Output>(url, body, {
+      withCredentials: true,
+      ...options,
+    });
+  }
 }

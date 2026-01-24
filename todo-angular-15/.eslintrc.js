@@ -26,7 +26,7 @@ module.exports = {
   },
   ignorePatterns: ['.eslintrc.js'],
   rules: {
-    'no-console': ['warn', { allow: ['info', 'error', 'warn'] }],
+    'no-console': ['warn', { allow: ['info', 'error', 'warn', 'debug'] }],
     'unused-imports/no-unused-imports': 'warn',
     '@typescript-eslint/no-unused-vars': 'off',
 

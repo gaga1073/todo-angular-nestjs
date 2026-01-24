@@ -1,0 +1,71 @@
+<div class="modal__container">
+  <form [formGroup]="editForm" (submit)="onSubmit()">
+    <div class="modal-header d-flex justify-content-end">
+      <h6>ユーザー詳細</h6>
+      <button type="button" class="btn-close" aria-label="Close"
+        (click)="onClickClose()">
+      </button>
+    </div>
+    <div class="modal-body d-flex flex-column row-gap-2">
+
+
+
+      <div class="px-4">
+
+        <div class=" row my-4 align-items-center">
+          <div class="col-4">ユーザー名</div>
+          <div class=" col-8">
+            <input type="text" formControlName="name" class="form-control">
+            <span class="danger"
+              *ngIf="name?.touched && name?.errors?.['required']">
+              ユーザー名は必須です
+            </span>
+          </div>
+        </div>
+        <div class=" row my-4 align-items-center">
+          <div class="col-4">メールアドレス</div>
+          <div class="col-8">{{user.email}}</div>
+        </div>
+        <div class="row my-4 align-items-center">
+          <div class="col-4">権限</div>
+          <div class="col-5">
+            <select class="form-select" formControlName="role">
+              <option value="admin">管理者</option>
+              <option value="general">一般</option>
+            </select>
+          </div>
+        </div>
+        <div class="row my-4 align-items-center">
+          <div class="col-4">所属グループ</div>
+          <div class="col-8">
+            <ng-container *ngFor="let group of groups">
+              <span
+                class="badge rounded-pill text-bg-primary table__group-badge">
+                {{ group.name }}
+              </span>
+            </ng-container>
+          </div>
+        </div>
+        <div class="row my-4 align-items-center">
+          <div class="col-4">アクティブ</div>
+          <div class="col-5">
+            <select class="form-select" formControlName="isActive">
+              <option value="active">アクティブ</option>
+              <option value="stop">停止</option>
+            </select>
+          </div>
+
+        </div>
+
+      </div>
+
+      <div class="modal__role-select">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary"
+        (click)="onClickClose()">閉じる</button>
+      <button type="submit" class="btn btn-primary">保存</button>
+    </div>
+  </form>
+</div>

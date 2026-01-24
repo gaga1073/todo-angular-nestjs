@@ -1,8 +1,9 @@
 import { getEndpoints } from '@/core/constants/endpoints.constant';
 import { ApiService } from '@/core/services/api.service';
 import {
-  User,
-  UserSearchList,
+  UserModel,
+  UserPatchRequest,
+  UserResponse,
   UserSearchRequest,
   UserSearchResponse,
   UsersResponse,
@@ -18,24 +19,12 @@ export class UserService {
   private readonly apiService = inject(ApiService);
   private readonly endpoint = getEndpoints();
 
-  private usersSubject = new BehaviorSubject<User[]>([]);
-  private userSearchListSubject = new BehaviorSubject<UserSearchList | null>(null);
+  private usersSubject = new BehaviorSubject<UserModel[]>([]);
+  // private userSearchListSubject = new BehaviorSubject<UserSearchList | null>(null);
 
   users$ = this.usersSubject.asObservable();
   get todos() {
     return this.usersSubject.asObservable();
-  }
-
-  getUsers() {
-    this.apiService.get<UsersResponse>(this.endpoint.user.users).subscribe({
-      next: (res) => {
-        this.usersSubject.next(res.users);
-      },
-      error: (err) => {
-        throw err;
-      },
-    });
-    return this.todos;
   }
 
   getUsersForPublicGroups(page = 1, pageSize = 10) {
@@ -55,6 +44,10 @@ export class UserService {
     return this.todos;
   }
 
+  getUser(userId: string) {
+    return this.apiService.get<UserResponse>(`${this.endpoint.user.users}/${userId}`);
+  }
+
   postUsersSearch(body?: UserSearchRequest, page = 1, pageSize = 10) {
     const params = new HttpParams()
       .set('groupType', 'public')
@@ -65,6 +58,13 @@ export class UserService {
       `${this.endpoint.user.search}`,
       body ?? {},
       { params },
+    );
+  }
+
+  patchUser(userId: string, body: UserPatchRequest) {
+    return this.apiService.patch<UserPatchRequest, UserResponse>(
+      `${this.endpoint.user.users}/${userId}`,
+      body,
     );
   }
 }

@@ -49,7 +49,8 @@
                 class="dropdown-menu dropdown-menu-end" role="menu"
                 aria-labelledby="button-basic">
                 <li role="menuitem">
-                  <div class="dropdown-item" type="button">
+                  <div class="dropdown-item" type="button"
+                    (click)="onEditClick(user.id)">
                     <i class="bi bi-pencil me-2"></i>
                     編集
                   </div>

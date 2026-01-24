@@ -9,6 +9,7 @@ import { UserRolePipe } from '@/core/pipes/user-role.pipe';
 import { UserActivationPipe } from '@/core/pipes/user-activation.pipe';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { SearchAreaComponent } from './components/search-area/search-area.component';
+import { EditModalComponent } from './components/edit-modal/edit-modal.component';
 
 @NgModule({
   declarations: [
@@ -17,6 +18,7 @@ import { SearchAreaComponent } from './components/search-area/search-area.compon
     UserRolePipe,
     UserActivationPipe,
     SearchAreaComponent,
+    EditModalComponent,
   ],
   imports: [
     CommonModule,

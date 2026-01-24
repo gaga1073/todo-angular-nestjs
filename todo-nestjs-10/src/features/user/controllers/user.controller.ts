@@ -5,7 +5,9 @@ import {
   Delete,
   Get,
   HttpCode,
+  InternalServerErrorException,
   Param,
+  Patch,
   Post,
   Put,
   Query,
@@ -27,12 +29,12 @@ import { UserQueryService } from '@/features/user/application/services/user-quer
 import { GroupClassificationQuery } from '@/features/user/dto/query/group-classification.query';
 import { PostUserSearchRequest } from '@/features/user/dto/request/post-user-search.request';
 import { PostUserRequest } from '@/features/user/dto/request/post-user.request';
-import { PutUserRequest } from '@/features/user/dto/request/put-user.request';
+import { PatchUserRequest } from '@/features/user/dto/request/patch-user.request';
 import { GetUserResponse } from '@/features/user/dto/response/get-user.response';
 import { GetUsersResponse } from '@/features/user/dto/response/get-users.response';
 import { PostUserSearchResponse } from '@/features/user/dto/response/post-user-search.response';
 import { PostUserResponse } from '@/features/user/dto/response/post-user.response';
-import { PutUserResponse } from '@/features/user/dto/response/put-user.response';
+import { PatchUserResponse } from '@/features/user/dto/response/patch-user.response';
 import { UserDto } from '@/features/user/dto/response/user.dto';
 import { UserIdParam } from '@/features/user/dto/user-id-param.dto';
 import { AuthUser } from '@/shared/decorators/auth-user.decorator';
@@ -131,6 +133,9 @@ export class UserController {
     @Body() body: PostUserSearchRequest,
   ): Promise<PostUserSearchResponse> {
     this.appLogger.info('[POST] /users/search is invoked', { method: this.postUserSearch.name });
+    this.appLogger.debug(`request body ${JSON.stringify(body)}`, {
+      method: this.postUserSearch.name,
+    });
 
     if (!((page !== undefined) === (pageSize !== undefined))) {
       throw new BadRequestException();
@@ -143,22 +148,25 @@ export class UserController {
     return response;
   }
 
-  @Put('/users/:userId')
+  @Patch('/users/:userId')
   @HttpCode(200)
   @UserRole('admin', 'general')
   @ApiOperation({
     summary: `ユーザー情報更新`,
     description: `ユーザー情報の更新処理を実行します。`,
   })
-  @ApiOkResponse({ description: 'Success', type: PutUserResponse })
+  @ApiOkResponse({ description: 'Success', type: PatchUserResponse })
   @ApiBadRequestResponse({ description: 'Bad Request' })
-  public async putUser(
+  public async patchUser(
     @Param() { userId }: UserIdParam,
-    @Body() body: PutUserRequest,
+    @Body() body: PatchUserRequest,
     @AuthUser() loginUser: UserDto,
-  ): Promise<PutUserResponse> {
-    this.appLogger.info('[POST] /users is invoked', { method: this.putUser.name });
+  ): Promise<PatchUserResponse> {
+    this.appLogger.info(`[PATCH] /users/${userId} is invoked`, { method: this.patchUser.name });
+    this.appLogger.debug(`request body ${JSON.stringify(body)}`, { method: this.patchUser.name });
+
     const response = await this.userCommandService.updateUser(userId, body, loginUser);
+    throw new InternalServerErrorException();
     return response;
   }
 

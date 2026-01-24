@@ -9,11 +9,12 @@ import {
 } from '@/features/user/domain/repositories/user-repository.interface';
 import { EmailDuplicationCheckDomainService } from '@/features/user/domain/services/email-duplication-check-domain.service';
 import { ValidateDeleteUserService } from '@/features/user/domain/services/validate-delete-user.service';
-import { PutUserRequest } from '@/features/user/dto/request/put-user.request';
-import { PutUserResponse } from '@/features/user/dto/response/put-user.response';
+
 import { UserDto } from '@/features/user/dto/response/user.dto';
 import { UserRoleType } from '@/shared/constants/management.constant';
 import { hashPassword } from '@/shared/utils/password.util';
+import { PatchUserRequest } from '../../dto/request/patch-user.request';
+import { PatchUserResponse } from '../../dto/response/patch-user.response';
 
 @Injectable()
 export class UserCommandService {
@@ -59,13 +60,13 @@ export class UserCommandService {
 
   public async updateUser(
     userId: string,
-    putUserRequest: PutUserRequest,
+    patchUserRequest: PatchUserRequest,
     loginUser: UserDto,
-  ): Promise<PutUserResponse> {
+  ): Promise<PatchUserResponse> {
     let hashedPassword;
 
-    if (putUserRequest.password !== undefined) {
-      hashedPassword = await hashPassword(putUserRequest.password);
+    if (patchUserRequest.password !== undefined) {
+      hashedPassword = await hashPassword(patchUserRequest.password);
     }
 
     const { user, version } = await this.userRepository.restoreAggregate(userId);
@@ -75,15 +76,15 @@ export class UserCommandService {
     }
 
     user.update({
-      email: putUserRequest?.email,
-      name: putUserRequest?.username,
+      email: patchUserRequest.email,
+      name: patchUserRequest.name,
       password: hashedPassword,
-      role: putUserRequest?.role,
+      role: patchUserRequest.role,
     });
 
     await this.userRepository.save(user, version);
 
-    const response = plainToInstance(PutUserResponse, user);
+    const response = plainToInstance(PatchUserResponse, user);
 
     return response;
   }

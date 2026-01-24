@@ -1,0 +1,25 @@
+:host {
+  .modal__title-icon {
+    cursor: pointer;
+    border-right: solid 0.1rem;
+    border-top: solid 0.1rem;
+    border-bottom: solid 0.1rem;
+    border-color: var(--white);
+    border-radius: 0 0.5rem 0.5rem 0;
+    background-color: var(--white);
+  }
+
+  .modal__title-icon:hover {
+    cursor: pointer;
+    border-right: solid 0.1rem;
+    border-top: solid 0.1rem;
+    border-bottom: solid 0.1rem;
+    border-color: var(--bs-border-color);
+    border-radius: 0 0.5rem 0.5rem 0;
+    background-color: var(--gray-100);
+  }
+
+  .table__group-badge {
+    margin-inline: 0.5rem;
+  }
+}

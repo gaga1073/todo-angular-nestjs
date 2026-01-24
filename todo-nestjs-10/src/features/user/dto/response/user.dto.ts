@@ -32,7 +32,4 @@ export class UserDto {
   @ApiProperty({ example: true })
   isActive!: boolean;
 
-  @Expose()
-  @ApiProperty({ example: false })
-  isDeleted!: boolean;
 }

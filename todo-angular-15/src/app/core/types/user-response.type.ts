@@ -1,28 +1,27 @@
-export type UsersResponse = {
-  users: User[];
-};
-
 export type UserRole = 'admin' | 'general';
 
 export type GroupClassification = 'public' | 'private';
 
-export type User = {
+export type UserModel = {
   id: string;
   name: string;
   email: string;
   role: UserRole;
   isActive: boolean;
-  isDeleted: boolean;
   createAt: string;
   updateAt: string;
+};
+
+export type UserListModel = UserModel & {
   groups: {
     id: string;
     name: string;
     groupClassification: string;
   }[];
 };
-
-export type UserSearchList = UserSearchResponse;
+export type UsersResponse = {
+  users: UserListModel[];
+};
 
 export type UserSearchResponse = UsersResponse & {
   pagenation: {
@@ -33,7 +32,15 @@ export type UserSearchResponse = UsersResponse & {
   };
 };
 
+export type UserResponse = UserModel;
+
 export type UserSearchRequest = {
+  name?: string;
+  role?: string;
+  isActive?: boolean;
+};
+
+export type UserPatchRequest = {
   name?: string;
   role?: string;
   isActive?: boolean;

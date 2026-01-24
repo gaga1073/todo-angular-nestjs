@@ -23,7 +23,7 @@
     "prisma:lint": "prisma validate",
     "migrate:dev": "prisma migrate dev --name ${n}",
     "migrate:reset": "prisma migrate reset",
-    "migrate:prod": "prisma migrate depley",
+    "migrate:prod": "prisma migrate deploy",
     "prisma:seed": "ts-node prisma/seed.ts"
   },
   "dependencies": {

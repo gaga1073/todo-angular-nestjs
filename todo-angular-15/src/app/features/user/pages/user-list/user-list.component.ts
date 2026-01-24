@@ -1,11 +1,13 @@
 import { getEndpoints } from '@/core/constants/endpoints.constant';
 import { DialogService } from '@/shared/dialog/dialog.service';
 import { Component, inject, OnInit } from '@angular/core';
-import { BsModalRef } from 'ngx-bootstrap/modal';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { UserService } from '@/features/user/services/user.service';
-import { User } from '@/core/types/user-response.type';
 import { LoadingService } from '@/shared/loading/loading.service';
 import { ApiService } from '@/core/services/api.service';
+import { UserListModel, UserModel } from '@/core/types/user-response.type';
+import { EditModalComponent } from '@/features/user/components/edit-modal/edit-modal.component';
+import { throwError } from 'rxjs';
 
 type ExampleAlertType = { type: string; msg: string };
 
@@ -27,14 +29,16 @@ export class UserListComponent implements OnInit {
   private readonly endpoint = getEndpoints();
 
   private readonly userService = inject(UserService);
-
   private readonly loadingService = inject(LoadingService);
+  private readonly bsModalService = inject(BsModalService);
 
   // searchConditionSubject = new BehaviorSubject<SearchCondition>({ currentPage: 1 });
 
   // searchCondition$ = this.searchConditionSubject.asObservable();
 
-  users: User[] = [];
+  users!: UserListModel[];
+  user!: UserModel;
+
   totalItems = 0;
   currentPage = 1;
 
@@ -75,21 +79,55 @@ export class UserListComponent implements OnInit {
     this.searchCondition = searchCondition;
 
     const page = 1;
-    this.fetchUser(searchCondition, page);
+    this.searchhUser(searchCondition, page);
   }
 
   handlePageChanged(page?: number) {
-    this.fetchUser(this.searchCondition, page);
+    this.searchhUser(this.searchCondition, page);
   }
 
-  private fetchUser(searchCondition?: SearchCondition, page?: number) {
+  handleClickDetail(userId: string) {
+    this.userService.getUser(userId).subscribe({
+      next: (res) => {
+        this.user = res;
+        this.bsModalRef = this.bsModalService.show(EditModalComponent, {
+          animated: true,
+          backdrop: 'static',
+          class: 'modal-lg modal-dialog-centered',
+          initialState: {
+            user: this.user,
+          },
+        });
+      },
+      error: (err) => {
+        throw err;
+      },
+    });
+  }
+
+  private searchhUser(searchCondition?: SearchCondition, page?: number) {
+    this.loadingService.show();
     this.userService.postUsersSearch(searchCondition, page).subscribe({
       next: (res) => {
         this.users = res?.users;
         this.totalItems = res?.pagenation.totalItems;
       },
       error: (err) => {
-        throw err;
+        return throwError(() => err);
+      },
+      complete: () => {
+        this.loadingService.hide();
+      },
+    });
+  }
+
+  private fetchUser(userId: string) {
+    this.userService.getUser(userId).subscribe({
+      next: (res) => {
+        this.user = res;
+      },
+      error: (err) => {
+        // throw err;
       },
     });
   }

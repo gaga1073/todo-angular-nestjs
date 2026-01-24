@@ -3,6 +3,7 @@
   <div class="d-flex flex-column gap-4">
     <app-search-area (pageSearch)="handleSearch($event)"></app-search-area>
     <app-table [users]="users" [totalItems]="totalItems"
-      (pageChanged)="handlePageChanged($event)"></app-table>
+      (handelPageChanged)="handlePageChanged($event)"
+      (handleClickDetail)="handleClickDetail($event)"></app-table>
   </div>
 </div>
