@@ -1,0 +1,65 @@
+<div class="modal__container">
+  <form [formGroup]="createForm" (submit)="onSubmit()">
+    <div class="modal-header d-flex justify-content-end">
+      <h6>プロジェクト新規作成</h6>
+      <button type="button" class="btn-close" aria-label="Close"
+        (click)="onClickClose()">
+      </button>
+    </div>
+    <div class="modal-body d-flex flex-column row-gap-2 mx-5 px-5">
+      <div class="px-4">
+        <!-- プロジェクト -->
+        <div class="row my-4">
+          <label>プロジェクト名 *</label>
+          <div class="input-group">
+            <span class="input-group-text" id="basic-addon1">
+              <i class="bi bi-briefcase"></i>
+            </span>
+            <input type="text" formControlName="name" class="form-control"
+              [class.is-invalid]="name?.touched && name?.invalid">
+          </div>
+          <span class="danger"
+            *ngIf="name?.touched && name?.errors?.['required']">
+            プロジェクト名は必須です。
+          </span>
+        </div>
+        <!-- 説明 -->
+        <div class="row my-4">
+          <label>説明</label>
+          <div class="input-group">
+            <span class="input-group-text"><i
+                class="bi bi-card-text"></i></span>
+            <input type="text" formControlName="description"
+              class="form-control"
+              [class.is-invalid]="description?.touched && description?.invalid">
+          </div>
+        </div>
+        <!-- 所属グループ -->
+        <div class="row my-4">
+          <label>所属グループ</label>
+          <div class="input-group">
+            <span class="input-group-text">
+              <i class="bi bi-people"></i>
+            </span>
+            <select class="form-select ng-invalid" formControlName="groupId">
+              <option value="" disabled selected>グループを選択</option>
+              <option *ngFor="let group of groups" [value]="group.id">
+                {{ group.name }}
+              </option>
+            </select>
+          </div>
+          <span class="danger"
+            *ngIf="groupId?.touched && groupId?.errors?.['required']">
+            グループは必須です。
+          </span>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary"
+          (click)="onClickClose()">閉じる</button>
+        <button type="submit" class="btn btn-primary">保存</button>
+      </div>
+    </div>
+  </form>
+</div>

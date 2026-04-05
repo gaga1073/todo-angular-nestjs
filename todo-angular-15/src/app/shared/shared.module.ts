@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import { HeaderComponent } from './header/header.component';
 import { ToastComponent } from './toast/toast.component';
 import { AlertModule } from 'ngx-bootstrap/alert';
@@ -16,7 +17,7 @@ import { ModalComponent } from './modal/modal.component';
     LoadingComponent,
     ModalComponent,
   ],
-  imports: [CommonModule, AlertModule, BsDropdownModule],
+  imports: [CommonModule, AlertModule, BsDropdownModule, RouterModule],
   exports: [HeaderComponent, ToastComponent, LoadingComponent],
 })
 export class SharedModule {}

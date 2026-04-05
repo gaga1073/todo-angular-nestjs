@@ -1,4 +1,4 @@
-import { TODO_URLs } from '@/core/constants/path.constant';
+import { HOME_PATHS } from '@/core/constants/path.constant';
 import { ToastService } from '@/shared/toast/toast.service';
 import { Component, inject } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
@@ -38,7 +38,7 @@ export class LoginComponent {
     this.authenticationService.login(this.loginForm.getRawValue()).subscribe({
       next: () => {
         this.loadingService.hide();
-        this.router.navigateByUrl(TODO_URLs.home);
+        this.router.navigateByUrl(HOME_PATHS.base);
         return;
       },
       error: () => {

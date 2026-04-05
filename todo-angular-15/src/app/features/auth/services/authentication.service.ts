@@ -1,6 +1,5 @@
 import { getEndpoints } from '@/core/constants/endpoints.constant';
 import { AUTHENTICATION_URLs } from '@/core/constants/path.constant';
-import { LoginResponse } from '@/core/types/login-response.type';
 import { inject, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import {
@@ -13,9 +12,8 @@ import {
   tap,
   throwError,
 } from 'rxjs';
-import { LoginRequest } from '@/features/auth/types/login-request.type';
-import { SignupRequest } from '@/features/auth/types/signup-request.type';
-import { AuthMe } from '@/core/types/auth-me.type';
+
+import { AuthMeResponse, LoginRequest, LoginResponse, SignupRequest } from '@/core/types/auth.type';
 import { ApiService } from '@/core/services/api.service';
 
 @Injectable({
@@ -45,11 +43,7 @@ export class AuthenticationService {
   }
 
   getAuthMe() {
-    return this.apiService.get<AuthMe>(this.endpoint.auth.me).pipe(
-      map((response: AuthMe) => {
-        return response;
-      }),
-    );
+    return this.apiService.get<AuthMeResponse>(this.endpoint.auth.me());
   }
 
   setIsLogin(isLogin: boolean) {
@@ -57,7 +51,7 @@ export class AuthenticationService {
   }
 
   login(loginRequest: LoginRequest): Observable<void> {
-    return this.apiService.post<LoginRequest, void>(this.endpoint.auth.login, loginRequest).pipe(
+    return this.apiService.post<LoginRequest, void>(this.endpoint.auth.login(), loginRequest).pipe(
       map((response) => {
         this.isLogin.next(true);
         return response;
@@ -66,16 +60,18 @@ export class AuthenticationService {
   }
 
   signup(signupRequest: SignupRequest): Observable<void> {
-    return this.apiService.post<SignupRequest, void>(this.endpoint.auth.signup, signupRequest).pipe(
-      map((response) => {
-        this.isLogin.next(true);
-        return response;
-      }),
-    );
+    return this.apiService
+      .post<SignupRequest, void>(this.endpoint.auth.signup(), signupRequest)
+      .pipe(
+        map((response) => {
+          this.isLogin.next(true);
+          return response;
+        }),
+      );
   }
 
   refreshToken(): Observable<LoginResponse> {
-    return this.apiService.get<LoginResponse>(this.endpoint.auth.refreshToken).pipe(
+    return this.apiService.get<LoginResponse>(this.endpoint.auth.refreshToken()).pipe(
       map((response) => {
         this.isLogin.next(true);
         return response;
@@ -89,8 +85,9 @@ export class AuthenticationService {
   }
 
   logOut() {
-    return this.apiService.get(this.endpoint.auth.logout).pipe(
+    return this.apiService.get(this.endpoint.auth.logout()).pipe(
       tap(() => {
+        this.isLogin.next(false);
         this.router.navigateByUrl(AUTHENTICATION_URLs.login);
       }),
       catchError((err) => {

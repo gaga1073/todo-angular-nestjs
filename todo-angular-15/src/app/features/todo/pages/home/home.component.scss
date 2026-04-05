@@ -1,7 +1,0 @@
-@use 'styles/page';
-
-:host {
-  .home__container {
-    @include page.main-page();
-  }
-}

@@ -1,0 +1,76 @@
+<div class="modal__container">
+  <form [formGroup]="editForm" (submit)="onSubmit()" class="mx-2">
+    <div class="modal-header d-flex justify-content-end">
+      <h6>グループ詳細</h6>
+      <button type="button" class="btn-close" aria-label="Close"
+        (click)="onClickClose()">
+      </button>
+    </div>
+    <div class="modal-body d-flex flex-column row-gap-2">
+      <div class="px-4">
+
+        <div class="row my-4 align-items-center">
+          <div class="col-4">グループ名</div>
+          <div class=" col-8">
+            <input type="text" formControlName="name" class="form-control"
+              [class.is-invalid]="name?.touched && name?.invalid">
+            <span class="danger"
+              *ngIf="name?.touched && name?.errors?.['required']">
+              グループ名は必須です。
+            </span>
+          </div>
+        </div>
+
+        <div class=" row my-4 align-items-center">
+          <div class="col-4">説明</div>
+          <div class="col-8">
+            <input type="text" formControlName="description"
+              class="form-control"
+              [class.is-invalid]="description?.touched && description?.invalid">
+          </div>
+        </div>
+
+        <div class="row mt-4 align-items-center">
+          <div class="col-4">所属ユーザー</div>
+          <div class="col-8">
+            <select class="form-select ng-invalid" #userSelect
+              (change)="addMember(userSelect)">
+              <option value="" disabled selected>ユーザーを選択</option>
+              <option *ngFor="let user of selectionUserList" [value]="user.id">
+                {{ user.name }}
+              </option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row mt-2 mb-4 align-items-center">
+          <div class="col-4"></div>
+          <div class="col-8">
+            <div class="badge-container">
+              <ng-container *ngFor="let user of selectedUsers">
+                <span
+                  class="badge rounded-pill text-bg-primary table__group-badge d-inline-flex align-items-center">
+                  {{ user.name }}
+                  <button type="button" class="btn-close btn-close-white ms-1"
+                    (click)="removeMember(user.id)"></button>
+                </span>
+              </ng-container>
+              <div *ngIf="selectedUsers.length === 0" class="text-muted small">
+                選択されたユーザーがありません
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="modal__role-select">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary"
+        (click)="onClickClose()">閉じる</button>
+      <button type="submit" class="btn btn-primary">保存</button>
+    </div>
+  </form>
+</div>

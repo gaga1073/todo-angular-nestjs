@@ -1,0 +1,81 @@
+<div class="modal__container">
+  <form [formGroup]="createForm" (submit)="onSubmit()">
+    <div class="modal-header d-flex justify-content-end">
+      <h6>グループ新規作成</h6>
+      <button type="button" class="btn-close" aria-label="Close"
+        (click)="onClickClose()">
+      </button>
+    </div>
+    <div class="modal-body d-flex flex-column row-gap-2 mx-5 px-5">
+      <div class="px-4">
+        <!-- グループ -->
+        <div class="row my-4">
+          <label>グループ名 *</label>
+          <div class="input-group">
+            <span class="input-group-text" id="basic-addon1">
+              <i class="bi bi-person"></i>
+            </span>
+            <input type="text" formControlName="name" class="form-control"
+              [class.is-invalid]="name?.touched && name?.invalid">
+          </div>
+          <span class="danger"
+            *ngIf="name?.touched && name?.errors?.['required']">
+            グループ名は必須です。
+          </span>
+        </div>
+        <!-- 説明 -->
+        <div class="row my-4">
+          <label>説明</label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+            <input type="text" formControlName="description"
+              class="form-control"
+              [class.is-invalid]="description?.touched && description?.invalid">
+          </div>
+        </div>
+        <!-- 所属ユーザー -->
+
+        <div class="row my-4">
+          <label>所属ユーザー</label>
+
+          <div class="input-group">
+            <span class="input-group-text"><i
+                class="bi bi-shield-lock"></i></span>
+            <select class="form-select ng-invalid" #groupSelect
+              (change)="addMember(groupSelect)">
+              <!-- [class.is-invalid]="members?.touched && members?.invalid"> -->
+              <option value="" disabled selected>ユーザーを選択</option>
+              <option *ngFor="let user of selectionUserList" [value]="user.id">
+                {{ user.name }}
+              </option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row my-4">
+          <div class="input-group">
+            <div class="badge-container">
+              <ng-container *ngFor=" let user of selectedUsers">
+                <span
+                  class="badge rounded-pill text-bg-primary table__group-badge d-inline-flex align-items-center">
+                  {{ user.name }}
+                  <button type="button" class="btn-close btn-close-white ms-1"
+                    (click)="removeMember(user.id)"></button>
+                </span>
+              </ng-container>
+              <div *ngIf="selectedUsers.length === 0" class="text-muted small">
+                選択されたユーザーがありません
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary"
+          (click)="onClickClose()">閉じる</button>
+        <button type="submit" class="btn btn-primary">保存</button>
+      </div>
+    </div>
+  </form>
+</div>

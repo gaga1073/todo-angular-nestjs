@@ -1,16 +1,16 @@
 import { getEndpoints } from '@/core/constants/endpoints.constant';
 import { ApiService } from '@/core/services/api.service';
+import { GroupsByUserIdResponse } from '@/core/types/group.type';
 import {
-  UserModel,
   UserPatchRequest,
+  UserPostRequest,
+  UserPostResponse,
   UserResponse,
   UserSearchRequest,
   UserSearchResponse,
-  UsersResponse,
-} from '@/core/types/user-response.type';
+} from '@/core/types/user.type';
 import { HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -19,33 +19,23 @@ export class UserService {
   private readonly apiService = inject(ApiService);
   private readonly endpoint = getEndpoints();
 
-  private usersSubject = new BehaviorSubject<UserModel[]>([]);
-  // private userSearchListSubject = new BehaviorSubject<UserSearchList | null>(null);
-
-  users$ = this.usersSubject.asObservable();
-  get todos() {
-    return this.usersSubject.asObservable();
-  }
-
-  getUsersForPublicGroups(page = 1, pageSize = 10) {
-    const params = new HttpParams()
-      .set('groupType', 'public')
-      .set('page', page)
-      .set('pageSize', pageSize);
-
-    this.apiService.get<UsersResponse>(`${this.endpoint.user.users}`, { params }).subscribe({
-      next: (res) => {
-        this.usersSubject.next(res.users);
-      },
-      error: (err) => {
-        throw err;
-      },
-    });
-    return this.todos;
-  }
-
   getUser(userId: string) {
-    return this.apiService.get<UserResponse>(`${this.endpoint.user.users}/${userId}`);
+    return this.apiService.get<UserResponse>(this.endpoint.user.user(userId));
+  }
+
+  getGroupsByUserId(userId: string) {
+    const params = new HttpParams().set('groupType', 'public');
+
+    return this.apiService.get<GroupsByUserIdResponse>(this.endpoint.group.groupsByUserId(userId), {
+      params,
+    });
+  }
+
+  postUser(body: UserPostRequest) {
+    return this.apiService.post<UserPostRequest, UserPostResponse>(
+      this.endpoint.user.users(),
+      body,
+    );
   }
 
   postUsersSearch(body?: UserSearchRequest, page = 1, pageSize = 10) {
@@ -55,7 +45,7 @@ export class UserService {
       .set('pageSize', pageSize);
 
     return this.apiService.post<UserSearchRequest, UserSearchResponse>(
-      `${this.endpoint.user.search}`,
+      this.endpoint.user.search(),
       body ?? {},
       { params },
     );
@@ -63,8 +53,12 @@ export class UserService {
 
   patchUser(userId: string, body: UserPatchRequest) {
     return this.apiService.patch<UserPatchRequest, UserResponse>(
-      `${this.endpoint.user.users}/${userId}`,
+      this.endpoint.user.user(userId),
       body,
     );
+  }
+
+  deleteUser(userId: string) {
+    return this.apiService.delete(this.endpoint.user.user(userId));
   }
 }

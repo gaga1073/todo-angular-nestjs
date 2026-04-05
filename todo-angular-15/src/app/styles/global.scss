@@ -5,6 +5,7 @@
 @use 'styles/form';
 @use 'styles/buttons';
 @use 'styles/table';
+@use 'styles/border';
 
 @include headings.headings();
 @include typography.typography();

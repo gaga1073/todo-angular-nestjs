@@ -1,13 +1,13 @@
-import { getEndpoints } from '@/core/constants/endpoints.constant';
 import { DialogService } from '@/shared/dialog/dialog.service';
 import { Component, inject, OnInit } from '@angular/core';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { UserService } from '@/features/user/services/user.service';
 import { LoadingService } from '@/shared/loading/loading.service';
-import { ApiService } from '@/core/services/api.service';
-import { UserListModel, UserModel } from '@/core/types/user-response.type';
+import { UserListModel, UserModel } from '@/core/types/user.type';
 import { EditModalComponent } from '@/features/user/components/edit-modal/edit-modal.component';
-import { throwError } from 'rxjs';
+import { catchError, finalize, forkJoin, tap, throwError } from 'rxjs';
+import { CreateModalComponent } from '@/features/user/components/create-modal/create-modal.component';
+import { GroupModel } from '@/core/types/group.type';
 
 type ExampleAlertType = { type: string; msg: string };
 
@@ -25,19 +25,13 @@ export type SearchCondition = {
 export class UserListComponent implements OnInit {
   private readonly modalService = inject(DialogService);
 
-  private readonly apiService = inject(ApiService);
-  private readonly endpoint = getEndpoints();
-
   private readonly userService = inject(UserService);
   private readonly loadingService = inject(LoadingService);
   private readonly bsModalService = inject(BsModalService);
 
-  // searchConditionSubject = new BehaviorSubject<SearchCondition>({ currentPage: 1 });
-
-  // searchCondition$ = this.searchConditionSubject.asObservable();
-
   users!: UserListModel[];
   user!: UserModel;
+  groups!: GroupModel[];
 
   totalItems = 0;
   currentPage = 1;
@@ -67,68 +61,86 @@ export class UserListComponent implements OnInit {
     this.handlePageChanged();
   }
 
-  reset(): void {
-    this.alerts = this.defaultAlerts;
-  }
+  // reset(): void {
+  //   this.alerts = this.defaultAlerts;
+  // }
 
-  onClosed(dismissedAlert: ExampleAlertType): void {
-    this.alerts = this.alerts.filter((alert) => alert !== dismissedAlert);
+  // onClosed(dismissedAlert: ExampleAlertType): void {
+  //   this.alerts = this.alerts.filter((alert) => alert !== dismissedAlert);
+  // }
+
+  onClickCreate() {
+    this.bsModalRef = this.bsModalService.show(CreateModalComponent, {
+      animated: true,
+      backdrop: 'static',
+      class: 'modal-lg modal-dialog-centered',
+      initialState: {},
+    });
+
+    this.bsModalRef.onHidden?.subscribe(() => {
+      this.handlePageChanged();
+    });
   }
 
   handleSearch(searchCondition: SearchCondition) {
     this.searchCondition = searchCondition;
 
     const page = 1;
-    this.searchhUser(searchCondition, page);
+    this.searchUser(searchCondition, page).subscribe();
   }
 
   handlePageChanged(page?: number) {
-    this.searchhUser(this.searchCondition, page);
+    this.searchUser(this.searchCondition, page).subscribe();
   }
 
   handleClickDetail(userId: string) {
-    this.userService.getUser(userId).subscribe({
-      next: (res) => {
-        this.user = res;
-        this.bsModalRef = this.bsModalService.show(EditModalComponent, {
-          animated: true,
-          backdrop: 'static',
-          class: 'modal-lg modal-dialog-centered',
-          initialState: {
-            user: this.user,
-          },
-        });
-      },
-      error: (err) => {
-        throw err;
-      },
-    });
-  }
-
-  private searchhUser(searchCondition?: SearchCondition, page?: number) {
     this.loadingService.show();
-    this.userService.postUsersSearch(searchCondition, page).subscribe({
-      next: (res) => {
-        this.users = res?.users;
-        this.totalItems = res?.pagenation.totalItems;
-      },
-      error: (err) => {
-        return throwError(() => err);
-      },
-      complete: () => {
-        this.loadingService.hide();
-      },
-    });
+
+    forkJoin([this.userService.getUser(userId), this.userService.getGroupsByUserId(userId)])
+      .pipe(
+        tap(([user, groups]) => {
+          this.user = user;
+          this.groups = groups;
+
+          this.bsModalRef = this.bsModalService.show(EditModalComponent, {
+            animated: true,
+            backdrop: 'static',
+            class: 'modal-lg modal-dialog-centered',
+            initialState: {
+              user: this.user,
+              groups: this.groups,
+            },
+          });
+
+          this.bsModalRef.onHidden?.subscribe(() => {
+            this.handlePageChanged();
+          });
+        }),
+        catchError((error) => {
+          this.modalService.openOkDialog('ユーザー情報の取得に失敗しました。');
+          return throwError(() => error);
+        }),
+        finalize(() => {
+          this.loadingService.hide();
+        }),
+      )
+      .subscribe();
   }
 
-  private fetchUser(userId: string) {
-    this.userService.getUser(userId).subscribe({
-      next: (res) => {
-        this.user = res;
-      },
-      error: (err) => {
-        // throw err;
-      },
-    });
+  private searchUser(searchCondition?: SearchCondition, page?: number) {
+    this.loadingService.show();
+    return this.userService.postUsersSearch(searchCondition, page).pipe(
+      tap((res) => {
+        this.users = res.items;
+        this.totalItems = res.pagination.totalItems;
+      }),
+      catchError((error) => {
+        this.modalService.openOkDialog('ユーザーの検索に失敗しました。');
+        return throwError(() => error);
+      }),
+      finalize(() => {
+        this.loadingService.hide();
+      }),
+    );
   }
 }

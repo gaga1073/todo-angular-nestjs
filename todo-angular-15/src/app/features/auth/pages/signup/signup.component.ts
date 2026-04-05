@@ -4,10 +4,11 @@ import { ToastService } from '@/shared/toast/toast.service';
 import { Component, inject } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
+import { BsModalService } from 'ngx-bootstrap/modal';
 import { AuthenticationService } from '@/features/auth/services/authentication.service';
 import { LoadingService } from '@/shared/loading/loading.service';
 import { DialogService } from '@/shared/dialog/dialog.service';
+import { catchError, finalize, of, switchMap, throwError } from 'rxjs';
 
 @Component({
   selector: 'app-signup',
@@ -22,10 +23,9 @@ export class SignupComponent {
   private readonly dialogService = inject(DialogService);
 
   private readonly loadingService = inject(LoadingService);
+  private readonly authenticationService = inject(AuthenticationService);
 
   isSignupFialure = false;
-
-  bsModalRef?: BsModalRef;
 
   signupForm = this.formBuilder.nonNullable.group(
     {
@@ -37,7 +37,18 @@ export class SignupComponent {
     { validators: passwordMatchValidator },
   );
 
-  private readonly authenticationService = inject(AuthenticationService);
+  get name() {
+    return this.signupForm.get('username');
+  }
+  get email() {
+    return this.signupForm.get('email');
+  }
+  get password() {
+    return this.signupForm.get('password');
+  }
+  get confirmPassword() {
+    return this.signupForm.get('confirmPassword');
+  }
 
   onSubmit(): void {
     this.loadingService.show();
@@ -48,21 +59,28 @@ export class SignupComponent {
       return;
     }
 
-    this.authenticationService.signup(this.signupForm.getRawValue()).subscribe({
-      next: () => {
-        this.bsModalRef = this.dialogService.openConfirmDialog('ユーザー登録が成功しました。');
-        this.loadingService.hide();
-
-        this.bsModalRef.onHidden?.subscribe(() => {
+    this.authenticationService
+      .signup(this.signupForm.getRawValue())
+      .pipe(
+        switchMap(() => {
+          const dialogRef = this.dialogService.openOkDialog('ユーザー登録が成功しました。');
+          return dialogRef.onHidden ?? of(void 0);
+        }),
+        catchError((error) => {
+          this.dialogService.openOkDialog('ユーザー登録に失敗しました。');
+          return throwError(() => error);
+        }),
+        finalize(() => this.loadingService.hide()),
+      )
+      .subscribe({
+        next: () => {
           this.router.navigateByUrl(AUTHENTICATION_URLs.login);
-        });
-      },
-      error: () => {
-        this.loadingService.hide();
-        this.isSignupFialure = true;
-        this.toastService.show('danger', 'サインアップに失敗しました。');
-      },
-    });
+        },
+        error: () => {
+          this.isSignupFialure = true;
+          this.toastService.show('danger', 'サインアップに失敗しました。');
+        },
+      });
   }
 
   onClickReturn(): void {

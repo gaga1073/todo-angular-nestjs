@@ -1,81 +1,69 @@
-import { Todo, TodoStatus } from '@/core/types/home-response.type';
-import { Component, inject, OnChanges, OnInit, SimpleChanges } from '@angular/core';
-import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
+import { Component, EventEmitter, inject, Input, OnInit, Output } from '@angular/core';
 import { PageChangedEvent } from 'ngx-bootstrap/pagination';
-import { DetailModalComponent } from '@/features/todo/components/detail-modal/detail-modal.component';
-import { HomeService } from '@/features/todo/services/home.service';
-import { TODO_STATUS } from '@/core/constants/common';
-import { assertNever } from '@/core/utils/common.util';
+import { catchError, finalize, throwError } from 'rxjs';
+import { GroupService } from '@/features/group/services/group.service';
+import { DialogService } from '@/shared/dialog/dialog.service';
+import { LoadingService } from '@/shared/loading/loading.service';
+import { TodoModel } from '@/core/types/todo.type';
 
 @Component({
   selector: 'app-table',
   templateUrl: './table.component.html',
   styleUrls: ['./table.component.scss'],
 })
-export class TableComponent implements OnInit, OnChanges {
-  itemPerPage = 10;
-  currentPage = 1;
+export class TableComponent implements OnInit {
+  private readonly groupService = inject(GroupService);
+  private readonly loadingService = inject(LoadingService);
+  private readonly dialogService = inject(DialogService);
 
-  bsModalRef?: BsModalRef;
-  todos: Todo[] = [];
-  pagedTodos: typeof this.todos = [];
+  @Input() currentPage = 1;
+  @Input() itemPerPage = 10;
+  @Input() totalItems!: number;
+  @Input() todos!: TodoModel[];
 
-  private readonly bsModalService = inject(BsModalService);
-  private readonly homeService = inject(HomeService);
+  @Output() readonly handelPageChanged = new EventEmitter<number>();
+  @Output() readonly handleClickDetail = new EventEmitter<string>();
+
+  private removeTodo(todoId: string) {
+    this.todos = this.todos.filter((todo) => todo.id !== todoId);
+  }
 
   ngOnInit(): void {
-    this.homeService.todos$.subscribe({
-      next: (todos) => {
-        this.todos = todos;
-        this.updatePage();
-      },
-    });
-  }
-
-  ngOnChanges(changes: SimpleChanges) {
-    if (changes['todos']) {
-      this.currentPage = 1; // 初期ページにリセット
-      if (this.todos.length !== 0) {
-        this.updatePage();
-      }
-    }
-  }
-
-  onDetailClick(todo: Todo) {
-    this.bsModalRef = this.bsModalService.show(DetailModalComponent, {
-      animated: true,
-      backdrop: 'static',
-      class: 'modal-lg',
-      initialState: {
-        todo: todo,
-      },
-    });
+    console.log(this.todos);
     return;
+  }
+
+  onEditClick(todoId: string) {
+    this.handleClickDetail.emit(todoId);
   }
 
   onPageChanged(event: PageChangedEvent) {
     this.currentPage = event.page;
     if (this.todos.length !== 0) {
-      this.updatePage();
+      this.handelPageChanged.emit(event.page);
     }
   }
 
-  mappingStatus(status: TodoStatus) {
-    switch (status) {
-      case 'NotStarted':
-        return TODO_STATUS.noStarted;
-      case 'InProgress':
-        return TODO_STATUS.InProgress;
-      case 'Completed':
-        return TODO_STATUS.Completed;
-      default:
-        return assertNever(status);
-    }
-  }
+  onDeleteClick(todoId: string) {
+    this.dialogService.openConfirmDialog('Todo情報を削除しますか？').subscribe((confirmed) => {
+      if (!confirmed) {
+        return;
+      }
 
-  private updatePage() {
-    const start = (this.currentPage - 1) * this.itemPerPage;
-    const end = start + this.itemPerPage;
-    this.pagedTodos = this.todos.slice(start, end);
+      this.loadingService.show();
+      this.groupService
+        .deleteGroup(todoId)
+        .pipe(
+          catchError((error) => {
+            this.dialogService.openOkDialog('Todo情報の削除に失敗しました。');
+            return throwError(() => error);
+          }),
+          finalize(() => this.loadingService.hide()),
+        )
+        .subscribe(() => {
+          this.removeTodo(todoId);
+          this.dialogService.openOkDialog('Todo情報を削除しました。');
+        });
+    });
   }
 }

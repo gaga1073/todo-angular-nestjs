@@ -21,3 +21,25 @@
 .pagination .page-link:hover {
   text-decoration: underline;
 }
+
+@mixin base-table() {
+  table {
+    table-layout: fixed;
+
+    th {
+      padding-block: 0.5rem;
+      padding-inline: 1rem;
+    }
+
+    td {
+      vertical-align: middle;
+      padding-block: 0.5rem;
+      padding-inline: 1rem;
+
+      button {
+        margin-right: 1rem;
+        font-size: 0.8rem;
+      }
+    }
+  }
+}

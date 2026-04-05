@@ -1,9 +1,15 @@
-@mixin form() {
-  border-color: $gray-500;
+.danger {
+  color: var(--red-danger);
 }
 
-:root {
-  .danger {
-    color: var(--red-danger);
-  }
+select:not(.is-invalid) {
+  border-color: var(--gray-300);
+}
+
+input:not(.is-invalid) {
+  border-color: var(--gray-300);
+}
+
+.input-group-text {
+  border-color: var(--gray-300);
 }

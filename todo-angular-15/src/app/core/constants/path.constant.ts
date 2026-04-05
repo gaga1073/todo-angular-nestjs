@@ -19,13 +19,39 @@ export const USER_URLS = {
   list: `${USER_PATHS.base}/${USER_PATHS.list}`,
 };
 
+export const GROUP_PATHS = {
+  base: 'group',
+  list: 'list',
+};
+
+export const GROUP_URLS = {
+  user: `${GROUP_PATHS.base}`,
+  list: `${GROUP_PATHS.base}/${GROUP_PATHS.list}`,
+};
+
+export const PROJECT_PATHS = {
+  base: 'projects',
+  list: 'list',
+};
+
+export const PROJECT_URLs = {
+  project: `${PROJECT_PATHS.base}`,
+  list: `${PROJECT_PATHS.base}/${PROJECT_PATHS.list}`,
+};
+
 export const TODO_PATHS = {
-  base: 'todo',
-  home: 'home',
+  base: 'todos',
   detail: 'detail',
 };
 
 export const TODO_URLs = {
-  home: `${TODO_PATHS.base}/${TODO_PATHS.home}`,
   todoDetail: `${TODO_PATHS.base}/${TODO_PATHS.detail}`,
+};
+
+export const HOME_PATHS = {
+  base: 'home',
+};
+
+export const HOME_URLs = {
+  home: `${HOME_PATHS.base}`,
 };

@@ -1,16 +1,18 @@
 import { inject, Injectable } from '@angular/core';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { DialogComponent } from './dialog.component';
+import { Subject, Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class DialogService {
-  bsModalRef?: BsModalRef;
-
   private readonly bsModalService = inject(BsModalService);
 
-  openConfirmDialog(message: string): BsModalRef<any> {
+  bsModalRef?: BsModalRef;
+  subject = new Subject<boolean>();
+
+  openConfirmDialog(message: string): Observable<boolean> {
     this.bsModalRef = this.bsModalService.show(DialogComponent, {
       initialState: {
         modalType: 'COMFIRM',
@@ -21,10 +23,10 @@ export class DialogService {
       class: 'modal-md',
     });
 
-    return this.bsModalRef;
+    return this.subject.asObservable();
   }
 
-  openOkDialog(message: string): BsModalRef<any> {
+  openOkDialog(message: string): BsModalRef<unknown> {
     this.bsModalRef = this.bsModalService.show(DialogComponent, {
       initialState: {
         modalType: 'OK',

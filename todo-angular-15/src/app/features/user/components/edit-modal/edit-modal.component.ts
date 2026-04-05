@@ -1,11 +1,12 @@
 import { Component, inject, Input, OnInit } from '@angular/core';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { UserService } from '@/features/user//services/user.service';
-import { UserModel } from '@/core/types/user-response.type';
+import { UserModel } from '@/core/types/user.type';
 import { FormBuilder, Validators } from '@angular/forms';
 import { LoadingService } from '@/shared/loading/loading.service';
-import { BehaviorSubject, finalize } from 'rxjs';
+import { finalize } from 'rxjs';
 import { DialogService } from '@/shared/dialog/dialog.service';
+import { GroupModel } from '@/core/types/group.type';
 
 @Component({
   selector: 'app-edit-modal',
@@ -17,14 +18,11 @@ export class EditModalComponent implements OnInit {
   private readonly formBuilder = inject(FormBuilder);
   private readonly loadingService = inject(LoadingService);
   private readonly dialogService = inject(DialogService);
-
-  private loading = new BehaviorSubject<boolean>(false);
+  private readonly bsModalRef = inject(BsModalRef);
 
   @Input() user!: UserModel;
 
-  groups = Array.from({ length: 10 }, (_, i) => ({ name: `グループ${i}` }));
-
-  constructor(public bsModalRef: BsModalRef) {}
+  @Input() groups!: GroupModel[];
 
   editForm = this.formBuilder.nonNullable.group({
     name: ['', [Validators.required]],
@@ -69,8 +67,6 @@ export class EditModalComponent implements OnInit {
       isActive: this.editForm.getRawValue().isActive === 'isAcitve',
     };
 
-    console.log(payload);
-
     this.userService
       .patchUser(this.user.id, payload)
       .pipe(
@@ -84,7 +80,7 @@ export class EditModalComponent implements OnInit {
           this.onClickClose();
         },
         error: () => {
-          this.dialogService.openOkDialog('更新失敗');
+          this.dialogService.openOkDialog('更新失敗しました。');
         },
       });
   }

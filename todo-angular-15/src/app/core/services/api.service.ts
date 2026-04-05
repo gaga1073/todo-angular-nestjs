@@ -48,4 +48,17 @@ export class ApiService {
       ...options,
     });
   }
+
+  delete(
+    url: string,
+    options?: {
+      headers?: HttpHeaders;
+      params?: HttpParams;
+    },
+  ): Observable<void> {
+    return this.httpClient.delete<void>(url, {
+      withCredentials: true,
+      ...options,
+    });
+  }
 }

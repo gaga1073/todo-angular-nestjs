@@ -1,7 +1,14 @@
 <div class="user-list__container">
   <h1 class="heading-page-title">ユーザーリスト</h1>
   <div class="d-flex flex-column gap-4">
-    <app-search-area (pageSearch)="handleSearch($event)"></app-search-area>
+    <div class="d-flex justify-content-between">
+      <app-search-area (pageSearch)="handleSearch($event)"></app-search-area>
+      <div class="mx-1">
+        <button (click)="onClickCreate()" type="button"
+          class="btn btn-outline-primary"><i
+            class="bi bi-plus-circle me-2"></i>新規</button>
+      </div>
+    </div>
     <app-table [users]="users" [totalItems]="totalItems"
       (handelPageChanged)="handlePageChanged($event)"
       (handleClickDetail)="handleClickDetail($event)"></app-table>

@@ -1,7 +1,7 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 import { AuthenticationService } from '@/features/auth/services/authentication.service';
-import { TODO_URLs } from '@/core/constants/path.constant';
+import { HOME_PATHS } from '@/core/constants/path.constant';
 import { CookieService } from 'ngx-cookie-service';
 
 export const noAuthenticationGuard: CanActivateFn = () => {
@@ -19,7 +19,7 @@ export const noAuthenticationGuard: CanActivateFn = () => {
   });
 
   if (isLogin) {
-    return router.createUrlTree([TODO_URLs.home]);
+    return router.createUrlTree([HOME_PATHS.base]);
   }
 
   return true;

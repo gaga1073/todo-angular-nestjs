@@ -1,0 +1,54 @@
+@use 'styles/table';
+
+:host {
+  .table__container {
+    @include table.base-table();
+
+    table {
+      th:nth-child(1),
+      td:nth-child(1) {
+        width: 15%;
+      } // グループ名
+      th:nth-child(2),
+      td:nth-child(2) {
+        width: 40%;
+      } // 説明
+      th:nth-child(3),
+      td:nth-child(3) {
+        width: 29%;
+      } // 所属ユーザー
+      th:nth-child(4),
+      td:nth-child(4) {
+        width: 12%;
+      } // 作成日
+      th:nth-child(5),
+      td:nth-child(5) {
+        width: 4%;
+      } // メニュー
+    }
+
+    .table__menu-icon {
+      cursor: pointer;
+    }
+
+    .table__group-badge {
+      margin-inline: 0.5rem;
+    }
+
+    .table__action-btn {
+      margin-inline: 0.3rem;
+      padding: 0.2rem;
+    }
+
+    .table__action-btn:hover {
+      background-color: var(--gray-100);
+      border-radius: var(--bs-border-radius);
+    }
+
+    .table__action-btn:active {
+      background-color: var(--gray-200);
+      border-color: var(--gray-400);
+      border-radius: var(--bs-border-radius);
+    }
+  }
+}

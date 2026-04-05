@@ -1,1 +1,17 @@
-<p>todo-detail works!</p>
+<div class="list__container">
+  <h1 class="heading-page-title">TODOリスト</h1>
+  <div class="d-flex flex-column gap-4">
+    <div class="d-flex justify-content-between">
+      <app-search-area [searchUsers]="searchUsers"
+        (pageSearch)="handleSearch($event)"></app-search-area>
+      <div class="mx-1">
+        <button (click)="onClickCreate()" type="button"
+          class="btn btn-outline-primary"><i
+            class="bi bi-plus-circle me-2"></i>新規</button>
+      </div>
+    </div>
+    <app-table [todos]="todos" [totalItems]="totalItems"
+      (handelPageChanged)="handlePageChanged($event)"
+      (handleClickDetail)="handleClickDetail($event)"></app-table>
+  </div>
+</div>

@@ -1,0 +1,77 @@
+<div class="table__container">
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>プロジェクト名</th>
+        <th>説明</th>
+        <th>所属グループ</th>
+        <th>作成日</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <ng-container *ngFor="let project of projects">
+        <tr>
+          <td>
+            <ng-container
+              *ngIf="editingProjectId === project.id; else nameDisplay">
+              <input type="text" class="form-control" [(ngModel)]="editingName"
+                (keydown.enter)="onSaveClick(project.id)"
+                (keydown.escape)="onCancelClick()">
+            </ng-container>
+            <ng-template #nameDisplay>
+              <div class="project-name" (click)="onRowClick(project.id)">
+                {{project.name}}</div>
+            </ng-template>
+          </td>
+          <td>
+            <ng-container
+              *ngIf="editingProjectId === project.id; else descriptionDisplay">
+              <textarea type="text" class="form-control" rows="3"
+                [(ngModel)]="editingDescription"
+                (keydown.enter)="onSaveClick(project.id)"
+                (keydown.escape)="onCancelClick()"></textarea>
+            </ng-container>
+            <ng-template
+              #descriptionDisplay>{{project.description}}</ng-template>
+          </td>
+          <td>{{project.group.name}}</td>
+          <td>{{project.createAt | date: 'yyyy/MM/dd'}}</td>
+          <td>
+            <div class="btn-group" dropdown>
+              <div id="button-basic" dropdownToggle type="button"
+                class="btn table__action-btn" aria-controls="dropdown-basic">
+                <i class="bi bi-three-dots-vertical"></i>
+              </div>
+              <ul id="dropdown-basic" *dropdownMenu
+                class="dropdown-menu dropdown-menu-end" role="menu"
+                aria-labelledby="button-basic">
+                <li role="menuitem">
+                  <div class="dropdown-item" type="button"
+                    (click)="onEditClick(project.id)">
+                    <i class="bi bi-pencil me-2"></i>
+                    編集
+                  </div>
+                </li>
+                <li role="menuitem">
+                  <div class="dropdown-item" type="button"
+                    (click)="onDeleteClick(project.id)">
+                    <i class="bi bi-trash3 me-2"></i>
+                    削除
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </td>
+        </tr>
+      </ng-container>
+    </tbody>
+  </table>
+  <div>
+    <pagination class="d-flex justify-content-end" [ngModel]="currentPage"
+      [boundaryLinks]="true" [totalItems]="totalItems"
+      (pageChanged)="onPageChanged($event)" previousText="&lsaquo;"
+      nextText="&rsaquo;" firstText="&laquo;" lastText="&raquo;">
+    </pagination>
+  </div>
+</div>

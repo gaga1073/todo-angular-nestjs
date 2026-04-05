@@ -1,0 +1,44 @@
+<div>
+  <form class="d-flex flex-column gap-4" [formGroup]="todoSearchForm"
+    (submit)="onSubmit()">
+    <div class="d-flex gap-4">
+      <div class="input-group search__input">
+        <span class="input-group-text search__icon">
+          <i class="bi bi-search"></i>
+        </span>
+        <input type="text" class="form-control" placeholder="タイトル"
+          formControlName="title">
+      </div>
+      <div class="d-flex gap-2">
+        <div class="d-flex align-items-center">ステータス:</div>
+        <select class="form-select search__select" formControlName="status">
+          <option selected value="all">すべて</option>
+          <option value="NotStarted">未開始</option>
+          <option value="InProgress">進行中</option>
+          <option value="Completed">完了</option>
+        </select>
+      </div>
+      <div class="d-flex gap-2">
+        <div class="d-flex align-items-center">担当者:</div>
+        <select class="form-select search__select"
+          formControlName="assigneeUserId">
+          <option selected value="all">-</option>
+          <option *ngFor="let user of searchUsers" [value]="user.id">
+            {{ user.name }}
+          </option>
+        </select>
+      </div>
+      <div class="d-flex gap-2">
+        <div class="d-flex align-items-center">作成者:</div>
+        <select class="form-select search__select"
+          formControlName="createUserId">
+          <option selected value="all">-</option>
+          <option *ngFor="let user of searchUsers" [value]="user.id">
+            {{ user.name }}
+          </option>
+        </select>
+      </div>
+      <button class="btn btn-primary">検索</button>
+    </div>
+  </form>
+</div>

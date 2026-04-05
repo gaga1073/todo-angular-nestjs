@@ -10,11 +10,3 @@ body {
   margin: 0;
   font-family: 'Noto Sans JP', 'Roboto', sans-serif;
 }
-
-input:not(.is-invalid) {
-  border-color: $gray-500 !important;
-}
-
-.input-group-text {
-  border-color: $gray-500 !important;
-}

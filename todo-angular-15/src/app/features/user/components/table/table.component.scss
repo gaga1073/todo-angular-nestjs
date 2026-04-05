@@ -1,20 +1,10 @@
+@use 'styles/table';
+
 :host {
   .table__container {
+    @include table.base-table();
+
     table {
-      table-layout: fixed;
-      td {
-        vertical-align: middle;
-
-        button {
-          margin-right: 1rem;
-          font-size: 0.8rem;
-        }
-      }
-
-      td {
-        padding-block: 0.5rem;
-      }
-
       th:nth-child(1),
       td:nth-child(1) {
         width: 15%;

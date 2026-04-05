@@ -1,0 +1,85 @@
+<div class="modal__container">
+  <form [formGroup]="createForm" (submit)="onSubmit()">
+    <div class="modal-header d-flex justify-content-end">
+      <h6>プロジェクト新規作成</h6>
+      <button type="button" class="btn-close" aria-label="Close"
+        (click)="onClickClose()">
+      </button>
+    </div>
+    <div class="modal-body d-flex flex-column row-gap-2 mx-5 px-5">
+      <div class="px-4">
+        <!-- TODO -->
+        <div class="row my-4">
+          <label>TODOタイトル *</label>
+          <div class="input-group">
+            <span class="input-group-text" id="basic-addon1">
+              <i class="bi bi-briefcase"></i>
+            </span>
+            <input type="text" formControlName="title" class="form-control"
+              [class.is-invalid]="title?.touched && title?.invalid">
+          </div>
+          <span class="danger"
+            *ngIf="title?.touched && title?.errors?.['required']">
+            TODOタイトルは必須です。
+          </span>
+        </div>
+        <!-- ステータス -->
+        <div class="row my-4">
+          <label>ステータス *</label>
+          <div class="input-group">
+            <span class="input-group-text" id="basic-addon2">
+              <i class="bi bi-list-check"></i>
+            </span>
+            <select class="form-select" formControlName="status">
+              <option value="" disabled selected>ステータスを選択</option>
+              <option value="NotStarted">未開始</option>
+              <option value="InProgress">進行中</option>
+              <option value="Completed">完了</option>
+            </select>
+          </div>
+          <span class="danger"
+            *ngIf="status?.touched && status?.errors?.['required']">
+            ステータスは必須です。
+          </span>
+        </div>
+        <!-- 説明 -->
+        <div class="row my-4">
+          <label>説明</label>
+          <div class="input-group">
+            <span class="input-group-text"><i
+                class="bi bi-card-text"></i></span>
+            <textarea #detailTextarea formControlName="description"
+              class="form-control modal__textarea" rows="3"
+              [class.is-invalid]="description?.touched && description?.invalid">
+            </textarea>
+          </div>
+        </div>
+        <!-- 所属グループ -->
+        <div class="row my-4">
+          <label>担当者</label>
+          <div class="input-group">
+            <span class="input-group-text">
+              <i class="bi bi-people"></i>
+            </span>
+            <select class="form-select ng-invalid" formControlName="assigneeId">
+              <option value="" disabled selected>担当者を選択</option>
+              <option *ngFor="let user of users" [value]="user.id">
+                {{ user.name }}
+              </option>
+            </select>
+          </div>
+          <span class="danger"
+            *ngIf="assigneeId?.touched && assigneeId?.errors?.['required']">
+            担当者は必須です。
+          </span>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary"
+          (click)="onClickClose()">閉じる</button>
+        <button type="submit" class="btn btn-primary">保存</button>
+      </div>
+    </div>
+  </form>
+</div>

@@ -1,0 +1,103 @@
+<div class="modal__container">
+  <form [formGroup]="createForm" (submit)="onSubmit()">
+    <div class="modal-header d-flex justify-content-end">
+      <h6>ユーザー新規作成</h6>
+      <button type="button" class="btn-close" aria-label="Close"
+        (click)="onClickClose()">
+      </button>
+    </div>
+    <div class="modal-body d-flex flex-column row-gap-2 mx-5 px-5">
+      <div class="px-4">
+        <!-- ユーザー -->
+        <div class="row my-4">
+          <label>ユーザー名 *</label>
+          <div class="input-group">
+            <span class="input-group-text" id="basic-addon1">
+              <i class="bi bi-person"></i>
+            </span>
+            <input type="text" formControlName="name" class="form-control"
+              [class.is-invalid]="name?.touched && name?.invalid">
+          </div>
+          <span class="danger"
+            *ngIf="name?.touched && name?.errors?.['required']">
+            ユーザー名は必須です。
+          </span>
+        </div>
+        <!-- メールアドレス -->
+        <div class="row my-4">
+          <label>メールアドレス *</label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+            <input type="text" formControlName="email" class="form-control"
+              [class.is-invalid]="email?.touched && email?.invalid">
+          </div>
+          <span class="danger"
+            *ngIf="email?.touched && email?.errors?.['required']">
+            メールアドレスは必須です。
+          </span>
+          <span class="danger"
+            *ngIf="email?.touched && email?.errors?.['email']">
+            メールアドレス形式で入力してください。
+          </span>
+        </div>
+        <!-- 権限 -->
+        <div class="row my-4">
+          <label>権限 *</label>
+          <div class="input-group">
+            <span class="input-group-text"><i
+                class="bi bi-shield-lock"></i></span>
+            <select class="form-select ng-invalid" formControlName="role"
+              [class.is-invalid]="role?.touched && role?.invalid">
+              <option value="admin">管理者</option>
+              <option value="general">一般</option>
+            </select>
+          </div>
+          <span class="danger"
+            *ngIf="role?.touched && role?.errors?.['required']">
+            権限は必須です。
+          </span>
+        </div>
+        <!-- パスワード -->
+        <div class="row my-4">
+          <label for="">パスワード *</label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-lock"></i></span>
+            <input type="password" formControlName="password"
+              class="form-control"
+              [class.is-invalid]="password?.touched && password?.invalid">
+          </div>
+          <span class="danger"
+            *ngIf="password?.touched && password?.errors?.['required']">
+            パスワードは必須です。
+          </span>
+        </div>
+        <!-- パスワード（確認） -->
+        <div class="row my-4">
+          <label for="signup__confirm-password">パスワード（確認） *</label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-lock"></i></span>
+            <input type="password" formControlName="confirmPassword"
+              class="form-control"
+              [class.is-invalid]="confirmPassword?.touched && confirmPassword?.invalid 
+          || confirmPassword?.touched && createForm.errors?.['passwordMismatch']">
+          </div>
+          <span class="danger"
+            *ngIf="confirmPassword?.touched && confirmPassword?.errors?.['required']">
+            パスワードは必須です。
+          </span>
+          <span class="danger"
+            *ngIf="confirmPassword?.touched && createForm.errors?.['passwordMismatch']">
+            パスワードが一致しません。
+          </span>
+        </div>
+        <div class="modal__role-select">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary"
+          (click)="onClickClose()">閉じる</button>
+        <button type="submit" class="btn btn-primary">保存</button>
+      </div>
+    </div>
+  </form>
+</div>

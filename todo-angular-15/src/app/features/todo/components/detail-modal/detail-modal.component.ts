@@ -1,4 +1,4 @@
-import { Todo } from '@/core/types/home-response.type';
+import { TodoModel } from '@/core/types/todo.type';
 import { AfterViewChecked, Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 
@@ -10,7 +10,7 @@ import { BsModalRef } from 'ngx-bootstrap/modal';
 export class DetailModalComponent implements OnInit, AfterViewChecked {
   constructor(public bsModalRef: BsModalRef) {}
 
-  @Input() todo!: Todo;
+  @Input() todo!: TodoModel;
 
   selectedValue = 'noStarted';
 
@@ -28,7 +28,7 @@ export class DetailModalComponent implements OnInit, AfterViewChecked {
   originText = '';
 
   @ViewChild('titleInput') titleInput?: ElementRef<HTMLInputElement>;
-  @ViewChild('detailTextarea') detailTextarea?: ElementRef<HTMLInputElement>;
+  @ViewChild('detailTextarea') detailTextarea?: ElementRef<HTMLTextAreaElement>;
 
   ngOnInit(): void {
     this.title = this.todo.title;

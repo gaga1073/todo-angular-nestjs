@@ -12,6 +12,7 @@ import { ModalModule } from 'ngx-bootstrap/modal';
 import { AuthenticationInterceptor } from './core/interceptors/authentication.interceptor';
 import { environment } from '@/environments/environment';
 import { AuthenticationService } from './features/auth/services/authentication.service';
+import { CurrentUserStore } from './core/stores/current-user.store';
 
 @NgModule({
   declarations: [AppComponent],
@@ -36,10 +37,13 @@ import { AuthenticationService } from './features/auth/services/authentication.s
     },
     {
       provide: APP_INITIALIZER,
-      useFactory: (auth: AuthenticationService) => {
-        return () => auth.initialize();
+      useFactory: (auth: AuthenticationService, currentUserStore: CurrentUserStore) => {
+        return async () => {
+          await auth.initialize();
+          await currentUserStore.initialize();
+        };
       },
-      deps: [AuthenticationService],
+      deps: [AuthenticationService, CurrentUserStore],
       multi: true,
     },
   ],

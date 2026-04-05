@@ -1,4 +1,9 @@
-import { USER_URLS } from '@/core/constants/path.constant';
+import {
+  AUTHENTICATION_URLs,
+  GROUP_URLS,
+  HOME_PATHS,
+  USER_URLS,
+} from '@/core/constants/path.constant';
 import { AuthenticationService } from '@/features/auth/services/authentication.service';
 import { Component, inject, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
@@ -15,7 +20,6 @@ export class HeaderComponent implements OnInit {
 
   isLogin = false;
 
-  // userImageUrl = 'https://lecture.ecc.u-tokyo.ac.jp/JOHZU/joho/imageformat/images/image01.jpg';
   userImageUrl = null;
 
   ngOnInit(): void {
@@ -24,11 +28,26 @@ export class HeaderComponent implements OnInit {
     });
   }
 
+  onClickHome() {
+    this.router.navigateByUrl(HOME_PATHS.base);
+  }
+
   onClickUser() {
     this.router.navigateByUrl(USER_URLS.list);
   }
 
+  onClickGroup() {
+    this.router.navigateByUrl(GROUP_URLS.list);
+  }
+
   logOut() {
-    this.authenticationService.logOut().subscribe();
+    this.authenticationService.logOut().subscribe({
+      next: () => {
+        this.router.navigateByUrl(AUTHENTICATION_URLs.login);
+      },
+      error: () => {
+        // Handle error if needed
+      },
+    });
   }
 }

@@ -1,4 +1,3 @@
-import { LoadingService } from '@/shared/loading/loading.service';
 import { Component, EventEmitter, inject, Output } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { SearchCondition } from '@/features/user/pages/user-list/user-list.component';
@@ -9,11 +8,7 @@ import { SearchCondition } from '@/features/user/pages/user-list/user-list.compo
   styleUrls: ['./search-area.component.scss'],
 })
 export class SearchAreaComponent {
-  private readonly loadingService = inject(LoadingService);
   private readonly formBuilder = inject(FormBuilder);
-
-  name?: string;
-  // @Input() searchConditionSubject!: BehaviorSubject<SearchCondition>;
 
   @Output() pageSearch = new EventEmitter<SearchCondition>();
 
@@ -22,6 +17,16 @@ export class SearchAreaComponent {
     role: ['all'],
     isActive: ['all'],
   });
+
+  get name() {
+    return this.userSearchForm.get('name');
+  }
+  get role() {
+    return this.userSearchForm.get('role');
+  }
+  get isActive() {
+    return this.userSearchForm.get('isActive');
+  }
 
   onSubmit(): void {
     const name = this.userSearchForm.getRawValue().name;

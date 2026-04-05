@@ -1,6 +1,6 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import { USER_ROLE } from '@/core/constants/common';
-import { UserRole } from '@/core/types/user-response.type';
+import { UserRole } from '@/core/types/user.type';
 import { assertNever } from '@/core/utils/common.util';
 
 @Pipe({

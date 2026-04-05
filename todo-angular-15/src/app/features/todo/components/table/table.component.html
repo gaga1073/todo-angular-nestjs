@@ -11,17 +11,18 @@
       </tr>
     </thead>
     <tbody>
-      <ng-container *ngFor="let todo of pagedTodos">
+      <ng-container *ngFor="let todo of todos">
         <tr>
           <td>{{todo.title}}</td>
-          <td>{{mappingStatus(todo.status)}}</td>
+          <td>{{todo.status}}</td>
           <td>{{todo.assignee.name}}</td>
           <td>{{todo.createBy.name}}</td>
           <td>{{todo.dueDate | date: 'yyyy/MM/dd'}}</td>
           <td>
             <button class="btn ink-reaction btn-primary"
-              (click)="onDetailClick(todo)">詳細</button>
-            <button class="btn ink-reaction btn-danger">削除</button>
+              (click)="onEditClick(todo.id)">詳細</button>
+            <button class="btn ink-reaction btn-danger"
+              (click)="onDeleteClick(todo.id)">削除</button>
           </td>
         </tr>
       </ng-container>

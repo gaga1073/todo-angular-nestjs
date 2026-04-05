@@ -1,5 +1,5 @@
 <div class="modal__container">
-  <form [formGroup]="editForm" (submit)="onSubmit()">
+  <form [formGroup]="editForm" (submit)="onSubmit()" class="mx-2">
     <div class="modal-header d-flex justify-content-end">
       <h6>ユーザー詳細</h6>
       <button type="button" class="btn-close" aria-label="Close"
@@ -7,21 +7,20 @@
       </button>
     </div>
     <div class="modal-body d-flex flex-column row-gap-2">
-
-
-
       <div class="px-4">
 
-        <div class=" row my-4 align-items-center">
+        <div class="row my-4 align-items-center">
           <div class="col-4">ユーザー名</div>
           <div class=" col-8">
-            <input type="text" formControlName="name" class="form-control">
+            <input type="text" formControlName="name" class="form-control"
+              [class.is-invalid]="name?.touched && name?.invalid">
             <span class="danger"
               *ngIf="name?.touched && name?.errors?.['required']">
-              ユーザー名は必須です
+              ユーザー名は必須です。
             </span>
           </div>
         </div>
+
         <div class=" row my-4 align-items-center">
           <div class="col-4">メールアドレス</div>
           <div class="col-8">{{user.email}}</div>
@@ -35,6 +34,7 @@
             </select>
           </div>
         </div>
+
         <div class="row my-4 align-items-center">
           <div class="col-4">所属グループ</div>
           <div class="col-8">
@@ -46,6 +46,7 @@
             </ng-container>
           </div>
         </div>
+
         <div class="row my-4 align-items-center">
           <div class="col-4">アクティブ</div>
           <div class="col-5">
@@ -54,9 +55,7 @@
               <option value="stop">停止</option>
             </select>
           </div>
-
         </div>
-
       </div>
 
       <div class="modal__role-select">

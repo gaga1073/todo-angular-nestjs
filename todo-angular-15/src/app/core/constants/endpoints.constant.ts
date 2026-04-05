@@ -2,23 +2,40 @@ import { inject } from '@angular/core';
 import { ENVIRONMENT, Environment } from '@/core/token/environment.token';
 
 export const getEndpoints = () => {
-  const environment = inject<Environment>(ENVIRONMENT);
+  const { apiBaseUrl } = inject<Environment>(ENVIRONMENT);
   return {
     auth: {
-      authentication: `${environment.apiBaseUrl}/auth`,
-      login: `${environment.apiBaseUrl}/auth/login`,
-      refreshToken: `${environment.apiBaseUrl}/auth/refresh-token`,
-      signup: `${environment.apiBaseUrl}/auth/signup`,
-      logout: `${environment.apiBaseUrl}/auth/logout`,
-      me: `${environment.apiBaseUrl}/auth/me`,
+      authentication: () => `${apiBaseUrl}/auth`,
+      login: () => `${apiBaseUrl}/auth/login`,
+      refreshToken: () => `${apiBaseUrl}/auth/refresh-token`,
+      signup: () => `${apiBaseUrl}/auth/signup`,
+      logout: () => `${apiBaseUrl}/auth/logout`,
+      me: () => `${apiBaseUrl}/auth/me`,
     },
     user: {
-      users: `${environment.apiBaseUrl}/users`,
-      search: `${environment.apiBaseUrl}/users/search`,
-      sample: `${environment.apiBaseUrl}/user/sample`,
+      user: (userId: string) => `${apiBaseUrl}/users/${userId}`,
+      users: () => `${apiBaseUrl}/users`,
+      search: () => `${apiBaseUrl}/users/search`,
+      usersByGroupId: (groupId: string) => `${apiBaseUrl}/groups/${groupId}/users`,
+      usersByProjectId: (projectId: string) => `${apiBaseUrl}/projects/${projectId}/users`,
+      sample: () => `${apiBaseUrl}/user/sample`,
+    },
+    group: {
+      group: (groupId: string) => `${apiBaseUrl}/groups/${groupId}`,
+      groups: () => `${apiBaseUrl}/groups`,
+      search: () => `${apiBaseUrl}/groups/search`,
+      groupsByUserId: (userId: string) => `${apiBaseUrl}/users/${userId}/groups`,
+    },
+    project: {
+      project: (projectId: string) => `${apiBaseUrl}/projects/${projectId}`,
+      projects: () => `${apiBaseUrl}/projects`,
+      search: () => `${apiBaseUrl}/projects/search`,
     },
     todo: {
-      todos: `${environment.apiBaseUrl}/todos`,
+      todo: (projectId: string, todoId: string) =>
+        `${apiBaseUrl}/projects/${projectId}/todos/${todoId}`,
+      todos: (projectId: string) => `${apiBaseUrl}/projects/${projectId}/todos`,
+      search: (projectId: string) => `${apiBaseUrl}/projects/${projectId}/todos/search`,
     },
   } as const;
 };

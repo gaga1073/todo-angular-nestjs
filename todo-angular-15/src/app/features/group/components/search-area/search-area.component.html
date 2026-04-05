@@ -1,0 +1,12 @@
+<div>
+  <form class="d-flex gap-4" [formGroup]="userSearchForm" (submit)="onSubmit()">
+    <div class=" input-group search__input">
+      <span class="input-group-text search__icon">
+        <i class="bi bi-search"></i>
+      </span>
+      <input type="text" class="form-control" placeholder="名前"
+        formControlName="name">
+    </div>
+    <button class="btn btn-primary">検索</button>
+  </form>
+</div>
