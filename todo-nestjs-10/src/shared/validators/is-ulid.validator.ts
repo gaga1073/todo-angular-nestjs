@@ -6,7 +6,7 @@ import {
 
 export class IsUlidConstrant implements ValidatorConstraintInterface {
   validate(value: string): Promise<boolean> | boolean {
-    const ULID_REGEX = /^[0-9A-HJKMNP-TV-Z]{26}$/i;
+    const ULID_REGEX = /^[0-9a-hjkmnp-tv-z]{26}$/i;
 
     if (typeof value !== 'string') {
       return false;

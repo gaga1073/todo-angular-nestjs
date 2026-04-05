@@ -1,4 +1,3 @@
-import { UserModel } from '@prisma/client';
 import { User } from '@/features/user/domain/entities/user';
 import { UserId } from '@/features/user/domain/value-objects/user-id.type';
 
@@ -11,7 +10,7 @@ export interface IUserRepository {
 
   save(user: User, version: number): Promise<void>;
 
-  findActiveUserByEmail(email: string): Promise<UserModel | null>;
+  existsActiveGroupByName(email: string): Promise<boolean>;
 
-  findById(userId: UserId): Promise<UserModel>;
+  existsDeletedUser(userId: UserId): Promise<boolean>;
 }

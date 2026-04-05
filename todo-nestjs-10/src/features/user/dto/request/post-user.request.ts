@@ -5,7 +5,7 @@ import { USER_ROLE, UserRoleType } from '@/shared/constants/management.constant'
 export class PostUserRequest {
   @IsString()
   @ApiProperty({ example: 'テストユーザー' })
-  username!: string;
+  name!: string;
 
   @IsString()
   @IsEmail()
@@ -13,7 +13,7 @@ export class PostUserRequest {
   email!: string;
 
   @IsIn(USER_ROLE)
-  @ApiProperty({ example: 'test@email.com' })
+  @ApiProperty({ example: 'admin' })
   role!: UserRoleType;
 
   @IsString()

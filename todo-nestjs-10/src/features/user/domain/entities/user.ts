@@ -1,3 +1,4 @@
+import { BadRequestException } from '@nestjs/common';
 import { Entity } from '@/core/domain/base-classes/entity';
 import { SampleEvent } from '@/features/user/domain/events/sample.envet';
 import { Email } from '@/features/user/domain/value-objects/email.type';
@@ -11,6 +12,7 @@ type UserProps = {
   name: string;
   password: HashPassword;
   role: Role;
+  updateAt: Date;
   createAt: Date;
   isActive: boolean;
   isDeleted: boolean;
@@ -29,6 +31,7 @@ type UserRestoreArgs = {
   name: string;
   password: string;
   role: UserRoleType;
+  updateAt: Date;
   createAt: Date;
   isActive: boolean;
   isDeleted: boolean;
@@ -59,6 +62,10 @@ export class User extends Entity<UserId, UserProps> {
     return this.props.isDeleted;
   }
 
+  public get updateAt(): Date {
+    return this.props.updateAt;
+  }
+
   public get createAt(): Date {
     return this.props.createAt;
   }
@@ -72,6 +79,7 @@ export class User extends Entity<UserId, UserProps> {
     const isDeleted = false;
     const isActive = true;
     const createAt = new Date();
+    const updateAt = new Date();
 
     const entity = new User(userId, {
       email: Email.create(email),
@@ -79,6 +87,7 @@ export class User extends Entity<UserId, UserProps> {
       password: HashPassword.create(password),
       role: Role.create(role),
       isDeleted,
+      updateAt,
       createAt,
       isActive,
     });
@@ -96,6 +105,7 @@ export class User extends Entity<UserId, UserProps> {
     role,
     isActive,
     createAt,
+    updateAt,
     isDeleted,
   }: UserRestoreArgs): User {
     return new User(UserId.create(id), {
@@ -106,6 +116,7 @@ export class User extends Entity<UserId, UserProps> {
       isDeleted,
       isActive,
       createAt,
+      updateAt,
     });
   }
 
@@ -120,6 +131,8 @@ export class User extends Entity<UserId, UserProps> {
     password?: string;
     role?: string;
   }): void {
+    if (this.isDeleted === true) throw new BadRequestException('対象ユーザーが削除済です。');
+
     if (email !== undefined) {
       this.props.email = Email.create(email);
     }
@@ -139,13 +152,21 @@ export class User extends Entity<UserId, UserProps> {
 
   public delete(): void {
     this.props.isDeleted = true;
+    this.props.updateAt = new Date();
+  }
+
+  public unDelete(): void {
+    this.props.isDeleted = false;
+    this.props.updateAt = new Date();
   }
 
   public activate(): void {
     this.props.isActive = true;
+    this.props.updateAt = new Date();
   }
 
   public deActivate(): void {
     this.props.isActive = false;
+    this.props.updateAt = new Date();
   }
 }

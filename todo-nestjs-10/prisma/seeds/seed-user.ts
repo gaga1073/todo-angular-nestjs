@@ -4,7 +4,7 @@ export const seedUser = async (prisma: PrismaClient): Promise<void> => {
   await prisma.userModel.createMany({
     data: [
       {
-        id: '01HZYC2028WMB3NJ16WCV9Z9E0',
+        id: '01hzyc2028wmb3nj16wcv9z9e0',
         name: 'user1',
         email: 'user1@email.com',
         role: 'admin',
@@ -14,7 +14,7 @@ export const seedUser = async (prisma: PrismaClient): Promise<void> => {
         isDeleted: false,
       },
       {
-        id: '01K4QB1SM3FQSZ38DG1VTWSWD9',
+        id: '01k4qb1sm3fqsz38dg1vtwswd9',
         name: 'user2',
         email: 'user2@email.com',
         role: 'admin',
@@ -24,7 +24,7 @@ export const seedUser = async (prisma: PrismaClient): Promise<void> => {
         isDeleted: false,
       },
       {
-        id: '01K4QD7FP0VK1ABEFHTK6P44BT',
+        id: '01k4qd7fp0vk1abefhtk6p44bt',
         name: 'user3',
         email: 'user3@email.com',
         role: 'general',

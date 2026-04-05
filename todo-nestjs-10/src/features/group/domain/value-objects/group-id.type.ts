@@ -12,12 +12,12 @@ export const GroupId = {
     return value;
   },
   newCreate: (): GroupId => {
-    return ulid() as GroupId;
+    return ulid().toLowerCase() as GroupId;
   },
 };
 
 function validate(value: string): asserts value is GroupId {
-  const Schema = z.string().regex(/^[0-7][0-9A-HJKMNP-TV-Z]{25}$/);
+  const Schema = z.string().regex(/^[0-7][0-9a-hjkmnp-tv-z]{25}$/);
   const result = Schema.safeParse(value);
 
   if (!result.success) {

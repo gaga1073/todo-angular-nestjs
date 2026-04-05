@@ -23,7 +23,7 @@ export function setAccessTokenToHttpOnlyCookie(reply: FastifyReply, token: strin
 
 export function terminateRefreshTokenHttpOnlyCookie(reply: FastifyReply): void {
   reply.clearCookie(JWT_TOKEN.refreshTokenKey, {
-    path: `/auth`,
+    path: `/api/auth`,
   });
 }
 

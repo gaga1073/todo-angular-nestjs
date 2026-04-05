@@ -1,28 +1,44 @@
-import { UserId } from '@/features/user/domain/value-objects/user-id.type';
-import { WorkspaceId } from '@/features/workspace/domain/value-objects/workspace-id.type';
 import { Entity } from '@/core/domain/base-classes/entity';
-import { TodoStatusType } from '@/shared/constants/todo.constant';
+import { ProjectId } from '@/features/project/domain/value-objects/project-id.type';
 import { TodoId } from '@/features/todo/domain/value-objects/todo-id.type';
 import { TodoStatus } from '@/features/todo/domain/value-objects/todo-status.type';
+import { UserId } from '@/features/user/domain/value-objects/user-id.type';
+import { TodoStatusType } from '@/shared/constants/todo.constant';
 
 type TodoProps = {
-  workspaceId: WorkspaceId;
+  projectId: ProjectId;
   title: string;
   description: string;
   status: TodoStatus;
   dueDate: Date;
   assigneeId?: UserId;
-  createdById: UserId;
+  createById: UserId;
+  isDeleted: boolean;
+  updateAt: Date;
+  createAt: Date;
 };
 
 type TodoCreateArgs = {
-  workspaceId: string;
+  projectId: string;
   title: string;
   description: string;
   status: TodoStatusType;
   dueDate: Date;
   assigneeId?: string;
-  createdById: string;
+  createById: string;
+};
+
+type TodoRestoreArgs = {
+  title: string;
+  projectId: string;
+  description: string;
+  status: TodoStatusType;
+  dueDate: Date;
+  assigneeId?: string;
+  createById: string;
+  isDeleted: boolean;
+  updateAt: Date;
+  createAt: Date;
 };
 
 export class Todo extends Entity<TodoId, TodoProps> {
@@ -30,8 +46,8 @@ export class Todo extends Entity<TodoId, TodoProps> {
     super(id, props);
   }
 
-  public get workspaceId(): WorkspaceId {
-    return this.props.workspaceId;
+  public get projectId(): ProjectId {
+    return this.props.projectId;
   }
 
   public get title(): string {
@@ -53,51 +69,105 @@ export class Todo extends Entity<TodoId, TodoProps> {
   public get assigneeId(): UserId | undefined {
     return this.props.assigneeId;
   }
-
-  public get createdById(): UserId {
-    return this.props.createdById;
+  public get createById(): UserId {
+    return this.props.createById;
+  }
+  public get isDeleted(): boolean {
+    return this.props.isDeleted;
+  }
+  public get updateAt(): Date {
+    return this.props.updateAt;
+  }
+  public get createAt(): Date {
+    return this.props.createAt;
   }
 
   public static create({
-    workspaceId,
+    projectId,
     title,
     description,
     status,
     dueDate,
     assigneeId,
-    createdById,
+    createById,
   }: TodoCreateArgs): Todo {
     const todoId = TodoId.newCreate();
     return new Todo(todoId, {
-      workspaceId: WorkspaceId.create(workspaceId),
+      projectId: ProjectId.create(projectId),
       title: title,
       description: description,
       status: TodoStatus.create(status),
       dueDate: dueDate,
       assigneeId: assigneeId ? UserId.create(assigneeId) : undefined,
-      createdById: UserId.create(createdById),
+      createById: UserId.create(createById),
+      isDeleted: false,
+      updateAt: new Date(),
+      createAt: new Date(),
     });
   }
 
   public static restore({
     id,
-    workspaceId,
+    projectId,
     title,
     description,
     status,
     dueDate,
     assigneeId,
-    createdById,
-  }: { id: string } & TodoCreateArgs): Todo {
+    createById,
+    isDeleted,
+    updateAt,
+    createAt,
+  }: { id: string } & TodoRestoreArgs): Todo {
     const todoId = TodoId.create(id);
     return new Todo(todoId, {
-      workspaceId: WorkspaceId.create(workspaceId),
+      projectId: ProjectId.create(projectId),
       title: title,
       description: description,
       status: TodoStatus.create(status),
       dueDate: dueDate,
       assigneeId: assigneeId !== undefined ? UserId.create(assigneeId) : undefined,
-      createdById: UserId.create(createdById),
+      createById: UserId.create(createById),
+      updateAt: updateAt,
+      createAt: createAt,
+      isDeleted: isDeleted,
     });
+  }
+
+  public update({
+    title,
+    description,
+    status,
+    dueDate,
+    assigneeId,
+  }: {
+    title?: string;
+    description?: string;
+    status?: TodoStatusType;
+    dueDate?: Date;
+    assigneeId?: string;
+  }): void {
+    if (title) {
+      this.props.title = title;
+    }
+    if (description) {
+      this.props.description = description;
+    }
+    if (status) {
+      this.props.status = TodoStatus.create(status);
+    }
+    if (dueDate) {
+      this.props.dueDate = dueDate;
+    }
+    if (assigneeId) {
+      this.props.assigneeId = UserId.create(assigneeId);
+    }
+
+    this.props.updateAt = new Date();
+  }
+
+  public delete(): void {
+    this.props.isDeleted = true;
+    this.props.updateAt = new Date();
   }
 }

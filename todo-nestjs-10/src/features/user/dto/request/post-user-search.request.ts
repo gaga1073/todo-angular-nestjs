@@ -1,17 +1,20 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Expose } from 'class-transformer';
+import { IsBoolean, IsOptional, IsString } from 'class-validator';
 import { UserRoleType } from '@/shared/constants/management.constant';
 
 export class PostUserSearchRequest {
-  @Expose()
+  @IsOptional()
+  @IsString()
   @ApiProperty({ example: 'user1' })
   name?: string;
 
-  @Expose()
+  @IsOptional()
+  @IsString()
   @ApiProperty({ example: 'admin' })
   role?: UserRoleType;
 
-  @Expose()
+  @IsOptional()
+  @IsBoolean()
   @ApiProperty({ example: true })
   isActive?: boolean;
 }

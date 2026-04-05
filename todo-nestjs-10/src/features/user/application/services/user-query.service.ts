@@ -1,6 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { plainToInstance } from 'class-transformer';
+import { GetGroupsByUserIdResponse } from '@/features/group/dto/response/get-group-by-user-id.response';
 import { PostUserSearchRequest } from '@/features/user/dto/request/post-user-search.request';
 import { GetUserResponse } from '@/features/user/dto/response/get-user.response';
 import { GetUsersResponse } from '@/features/user/dto/response/get-users.response';
@@ -27,7 +28,7 @@ export class UserQueryService {
   public async getUserForJwtValidation(id: string): Promise<UserDto | null> {
     try {
       const user = await this.prisma.userModel.findUnique({
-        where: { id: id },
+        where: { id: id, isDeleted: false, isActive: true },
       });
 
       return plainToInstance(UserDto, user);
@@ -37,35 +38,16 @@ export class UserQueryService {
     }
   }
 
-  public async findUsers(
-    loginUser: UserDto,
-    groupClassification?: GroupClassificationType,
-  ): Promise<GetUsersResponse> {
+  public async findUsers(loginUser: UserDto): Promise<GetUsersResponse[]> {
     try {
       const rows = await this.prisma.userModel.findMany({
         where: {
           id: loginUser.role === 'general' ? loginUser.id : undefined,
-        },
-        include: {
-          groups: {
-            where: {
-              group: {
-                groupClassification: groupClassification,
-              },
-            },
-            include: {
-              group: true,
-            },
-          },
+          isDeleted: false,
         },
       });
 
-      const users = rows.map((row) => ({
-        ...row,
-        groups: row.groups.map((value) => value.group),
-      }));
-
-      return plainToInstance(GetUsersResponse, { users: users });
+      return rows.map((row) => plainToInstance(GetUsersResponse, row));
     } catch (error) {
       this.appLogger.error('Database error', error, { method: this.findUsers.name });
       return handlePrismaError(error);
@@ -74,11 +56,13 @@ export class UserQueryService {
 
   public async findUser(id: string, loginUser: UserDto): Promise<GetUserResponse> {
     try {
-      if (loginUser.role === 'general') {
+      if (loginUser.role === 'general' && id !== loginUser.id) {
+        throw new ForbiddenException('権限エラー');
       }
       const user = await this.prisma.userModel.findUniqueOrThrow({
         where: {
           id: id,
+          isDeleted: false,
         },
       });
 
@@ -89,11 +73,35 @@ export class UserQueryService {
     }
   }
 
+  public async findUsersByGroupId(
+    groupId: string,
+    loginUser: UserDto,
+  ): Promise<GetGroupsByUserIdResponse[]> {
+    try {
+      const rows = await this.prisma.userModel.findMany({
+        where: {
+          id: loginUser.role === 'general' ? loginUser.id : undefined,
+          isDeleted: false,
+          groups: {
+            some: {
+              groupId: groupId,
+            },
+          },
+        },
+      });
+
+      return rows.map((row) => plainToInstance(GetGroupsByUserIdResponse, row));
+    } catch (error) {
+      this.appLogger.error('Database error', error, { method: this.findUsersByGroupId.name });
+      return handlePrismaError(error);
+    }
+  }
+
   public async findSearch(
     loginUser: UserDto,
     postUserSearchRequest: PostUserSearchRequest,
     groupClassification?: GroupClassificationType,
-    pagenation?: {
+    pagination?: {
       page: number;
       pageSize: number;
     },
@@ -103,10 +111,10 @@ export class UserQueryService {
 
       let skipAndTake;
 
-      if (pagenation !== undefined) {
+      if (pagination !== undefined) {
         skipAndTake = {
-          skip: pagenation.pageSize * (pagenation.page - 1),
-          take: pagenation.pageSize,
+          skip: pagination.pageSize * (pagination.page - 1),
+          take: pagination.pageSize,
         };
       }
 
@@ -119,6 +127,7 @@ export class UserQueryService {
           : undefined),
         role: role,
         isActive: isActive,
+        isDeleted: false,
       };
 
       const rows = await this.prisma.userModel.findMany({
@@ -149,18 +158,45 @@ export class UserQueryService {
       }));
 
       return plainToInstance(PostUserSearchResponse, {
-        users: users,
-        ...(pagenation !== undefined
+        items: users,
+        ...(pagination !== undefined
           ? {
-              pagenation: {
-                currentPage: pagenation.page,
-                pageSize: pagenation.pageSize,
-                totalPages: Math.ceil(totalRowCount / pagenation.pageSize),
+              pagination: {
+                currentPage: pagination.page,
+                pageSize: pagination.pageSize,
+                totalPages: Math.ceil(totalRowCount / pagination.pageSize),
                 totalItems: totalRowCount,
               },
             }
           : undefined),
       });
+    } catch (error) {
+      this.appLogger.error('Database error', error, { method: this.findUsers.name });
+      return handlePrismaError(error);
+    }
+  }
+
+  public async findByProjectId(projectId: string, loginUser: UserDto): Promise<GetUsersResponse[]> {
+    try {
+      const row = await this.prisma.userModel.findMany({
+        where: {
+          id: loginUser.role === 'general' ? loginUser.id : undefined,
+          isDeleted: false,
+          groups: {
+            some: {
+              group: {
+                projects: {
+                  some: {
+                    id: projectId,
+                  },
+                },
+              },
+            },
+          },
+        },
+      });
+
+      return row.map((row) => plainToInstance(GetUsersResponse, row));
     } catch (error) {
       this.appLogger.error('Database error', error, { method: this.findUsers.name });
       return handlePrismaError(error);

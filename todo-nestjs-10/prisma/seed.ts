@@ -1,8 +1,8 @@
 import { PrismaClient } from '@prisma/client';
 import { seedGroup } from './seeds/seed-group';
+import { seedProject } from './seeds/seed-project';
 import { seedTodo } from './seeds/seed-todo';
 import { seedUser } from './seeds/seed-user';
-import { seedWorkspace } from './seeds/seed-workspace';
 
 const prisma = new PrismaClient();
 
@@ -10,9 +10,8 @@ async function main() {
   await prisma.$executeRawUnsafe(`
   TRUNCATE TABLE 
     "todos",
-    "workspaces",
+    "projects",
     "user_groups",
-    "group_workspaces",
     "groups",
     "users"
   RESTART IDENTITY CASCADE
@@ -20,7 +19,7 @@ async function main() {
 
   await seedUser(prisma);
   await seedGroup(prisma);
-  await seedWorkspace(prisma);
+  await seedProject(prisma);
   await seedTodo(prisma);
 }
 

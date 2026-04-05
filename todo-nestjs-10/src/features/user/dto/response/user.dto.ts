@@ -5,7 +5,7 @@ import { UserRoleType } from '@/shared/constants/management.constant';
 @Exclude()
 export class UserDto {
   @Expose()
-  @ApiProperty({ example: '01HZYC2028WMB3NJ16WCV9Z9E0' })
+  @ApiProperty({ example: '01hzyc2028wmb3nj16wcv9z9e0' })
   id!: string;
 
   @Expose()
@@ -31,5 +31,4 @@ export class UserDto {
   @Expose()
   @ApiProperty({ example: true })
   isActive!: boolean;
-
 }

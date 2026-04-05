@@ -7,7 +7,7 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { UserModel } from '@prisma/client';
 import { plainToInstance } from 'class-transformer';
-import { CreateUserDomainService } from '@/core/domain/services/create-user-domain.service';
+import { ProvisionUserService } from '@/core/application/services/provision-user.service';
 import { UserDto } from '@/features/auth/dto/login.response';
 import { SignupRequest } from '@/features/auth/dto/signup.request';
 import { User } from '@/features/user/domain/entities/user';
@@ -24,7 +24,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
     private readonly appLoggerFactory: AppLoggerFactory,
     private readonly prisma: PrismaProvider,
-    private readonly createUserDomainService: CreateUserDomainService,
+    private readonly provisionUserService: ProvisionUserService,
   ) {
     this.appLogger = this.appLoggerFactory.create(AuthService.name);
   }
@@ -110,7 +110,7 @@ export class AuthService {
       role: 'general',
     });
 
-    await this.createUserDomainService.execute(user);
+    await this.provisionUserService.execute(user);
 
     const response = plainToInstance(UserDto, user);
 

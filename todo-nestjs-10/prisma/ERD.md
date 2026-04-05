@@ -22,9 +22,10 @@ erDiagram
 }
 "groups" {
   String(26) id PK
-  String name UK
+  String(30) name
   String description
   GroupClassification group_classification
+  Boolean is_deleted
   DateTime create_at
   DateTime update_at
   Int version
@@ -33,17 +34,12 @@ erDiagram
   String user_id FK
   String group_id FK
 }
-"group_workspaces" {
-  String workspace_id FK
-  String group_id FK
-  WorkspaceRole role
-  Int version
-}
-"workspaces" {
+"projects" {
   String(26) id PK
   String(30) name
   String description
-  WorkspaceClassification workspace_classification
+  String(26) group_id FK
+  Boolean is_deleted
   String(26) create_by_id
   DateTime create_at
   DateTime update_at
@@ -52,11 +48,12 @@ erDiagram
 "todos" {
   String(26) id PK
   String(30) title
-  String(26) workspace_id FK
+  String(26) project_id FK
   String description
   Status status
   DateTime due_date
-  String(26) assignee_id FK
+  String(26) assignee_id FK "nullable"
+  Boolean is_deleted
   String(26) create_by_id FK
   DateTime create_at
   DateTime update_at
@@ -64,10 +61,9 @@ erDiagram
 }
 "user_groups" }o--|| "users" : user
 "user_groups" }o--|| "groups" : group
-"group_workspaces" }o--|| "workspaces" : workspace
-"group_workspaces" }o--|| "groups" : group
-"todos" }o--|| "workspaces" : workspace
-"todos" }o--|| "users" : assignee
+"projects" }o--|| "groups" : group
+"todos" }o--|| "projects" : project
+"todos" }o--o| "users" : assignee
 "todos" }o--|| "users" : createBy
 ```
 
@@ -94,6 +90,7 @@ Properties as follows:
 - `name`: グループ名 *(グループ名)*
 - `description`: グループの説明 *(TEXT)*
 - `group_classification`: グループの種別 *(ENUM{private, public}), NOT NULL)*
+- `is_deleted`: 削除フラグ *(BOOLEAN, NOT NULL)*
 - `create_at`: 作成日 *(TIMESTAMP WITH TIME ZONE, NOT NULL)*
 - `update_at`: 更新日 *(TIMESTAMP WITH TIME ZONE)*
 - `version`: 排他制御バージョン *(INT)*
@@ -105,23 +102,15 @@ Properties as follows:
 - `user_id`: ユーザーID *(CHAR(26))*
 - `group_id`: グループID *(CHAR(26))*
 
-### `group_workspaces`
-
-Properties as follows:
-
-- `workspace_id`: ワークスペースID *(CHAR(26))*
-- `group_id`: グループID *(CHAR(26))*
-- `role`: ワークスペース権限 *(enum{owner, member})*
-- `version`: 排他制御バージョン *(INT)*
-
-### `workspaces`
+### `projects`
 
 Properties as follows:
 
 - `id`: ワークスペースID *(CHAR(26))*
 - `name`: ワークスペース名 *(VARCHAR(30))*
 - `description`: ワークスペースの説明 *(TEXT)*
-- `workspace_classification`: ワークスペースの種別 *(ENUM{private, public}), NOT NULL)*
+- `group_id`: グループID **(CHAR(26))*
+- `is_deleted`: 削除フラグ *(BOOLEAN, NOT NULL)*
 - `create_by_id`: 所有者のユーザーID *(CHAR(26))*
 - `create_at`: 作成日 *(TIMESTAMP WITH TIME ZONE, NOT NULL)*
 - `update_at`: 更新日 *(TIMESTAMP WITH TIME ZONE)*
@@ -133,11 +122,12 @@ Properties as follows:
 
 - `id`: TODO ID *(CHAR(26))*
 - `title`: TODOタイトル *(VARCHAR(30))*
-- `workspace_id`: ワークスペースID *(CHAR(26))*
+- `project_id`: プロジェクトID *(CHAR(26))*
 - `description`: TODOの説明 *(TEXT)*
 - `status`: ステータス *(enum{NotStarted, InProgress, Completed})*
 - `due_date`: 完了期限日 *(CHAR(26))*
 - `assignee_id`: 担当者のユーザーID *(CHAR(26))*
+- `is_deleted`: 削除フラグ *(BOOLEAN, NOT NULL)*
 - `create_by_id`: 作成者のユーザーID *(CHAR(26))*
 - `create_at`: 作成日 *(TIMESTAMP WITH TIME ZONE, NOT NULL)*
 - `update_at`: 更新日 *(TIMESTAMP WITH TIME ZONE)*

@@ -12,12 +12,12 @@ export const Ulid = {
     return value;
   },
   newCreate: (): Ulid => {
-    return ulid() as Ulid;
+    return ulid().toLowerCase() as Ulid;
   },
 };
 
 function validate(value: string): asserts value is Ulid {
-  const Schema = z.string().regex(/^[0-7][0-9A-HJKMNP-TV-Z]{25}$/);
+  const Schema = z.string().regex(/^[0-7][0-9a-hjkmnp-tv-z]{25}$/);
   const result = Schema.safeParse(value);
 
   if (!result.success) {

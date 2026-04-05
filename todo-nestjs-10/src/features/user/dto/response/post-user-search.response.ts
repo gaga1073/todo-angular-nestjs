@@ -7,7 +7,7 @@ import { GroupClassificationType } from '@/shared/constants/management.constant'
 @Exclude()
 class GroupDto {
   @Expose()
-  @ApiProperty({ example: '01K4QB25X33AHEGX765NRDCEC9' })
+  @ApiProperty({ example: '01k4qb25x33ahegx765nrdcec9' })
   id!: string;
 
   @Expose()
@@ -28,7 +28,7 @@ class UserGroupDto extends UserDto {
 }
 
 @Exclude()
-class Pagenation {
+class Pagination {
   @Expose()
   @ApiProperty()
   currentPage!: number;
@@ -51,10 +51,11 @@ export class PostUserSearchResponse {
   @Expose()
   @Type(() => UserGroupDto)
   @ApiProperty({ type: () => [UserGroupDto] })
-  users!: UserGroupDto[];
+  items!: UserGroupDto[];
 
   @Expose()
   @IsOptional()
-  @Type(() => Pagenation)
-  pagenation?: Pagenation;
+  @Type(() => Pagination)
+  @ApiProperty({ type: () => Pagination })
+  pagination?: Pagination;
 }

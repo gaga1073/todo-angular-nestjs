@@ -4,11 +4,9 @@ override:
     default: 'mapTable=!users'
   GroupModel:
     default: 'mapTable=!groups'
-  WorkspaceModel:
-    default: 'mapTable=!workspaces'
+  ProjectModel:
+    default: 'mapTable=!projects'
   TodoModel:
     default: 'mapTable=!todos'
   UserGroupModel:
     default: 'mapTable=!user_groups'
-  GroupWorkspaceModel:
-    default: 'mapTable=!group_workspaces'

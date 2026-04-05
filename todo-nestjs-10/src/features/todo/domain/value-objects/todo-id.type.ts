@@ -12,12 +12,12 @@ export const TodoId = {
     return value;
   },
   newCreate: (): TodoId => {
-    return ulid() as TodoId;
+    return ulid().toLowerCase() as TodoId;
   },
 };
 
 function validate(value: string): asserts value is TodoId {
-  const Schema = z.string().regex(/^[0-7][0-9A-HJKMNP-TV-Z]{25}$/);
+  const Schema = z.string().regex(/^[0-7][0-9a-hjkmnp-tv-z]{25}$/);
   const result = Schema.safeParse(value);
 
   if (!result.success) {

@@ -5,16 +5,16 @@ import { UserRoleType } from '@/shared/constants/management.constant';
 @Exclude()
 export class UserDto {
   @Expose()
-  @ApiProperty({ example: '01HZYC2028WMB3NJ16WCV9Z9E0' })
-  readonly id!: string;
+  @ApiProperty({ example: '01hzyc2028wmb3nj16wcv9z9e0' })
+  id!: string;
 
   @Expose()
   @ApiProperty({ example: 'user@email.com' })
-  readonly email!: string;
+  email!: string;
 
   @Expose()
   @ApiProperty({ example: '山田' })
-  readonly name!: string;
+  name!: string;
 
   @Expose()
   @ApiProperty({ example: 'admin' })

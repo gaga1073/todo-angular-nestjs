@@ -1,38 +1,39 @@
-import { BadRequestException, ForbiddenException, Inject, Injectable } from '@nestjs/common';
+import { ForbiddenException, Inject, Injectable } from '@nestjs/common';
 import { EventPublisher } from '@nestjs/cqrs';
 import { plainToInstance } from 'class-transformer';
-import { CreateUserDomainService } from '@/core/domain/services/create-user-domain.service';
+import { DeprovisionUserService } from '@/core/application/services/deprovision-user.service';
+import { ProvisionUserService } from '@/core/application/services/provision-user.service';
 import { User } from '@/features/user/domain/entities/user';
 import {
   IUserRepository,
   IUserRepositoryToken,
 } from '@/features/user/domain/repositories/user-repository.interface';
-import { EmailDuplicationCheckDomainService } from '@/features/user/domain/services/email-duplication-check-domain.service';
-import { ValidateDeleteUserService } from '@/features/user/domain/services/validate-delete-user.service';
-
+import { AssertEmailNotDuplicatedService } from '@/features/user/domain/services/assert-email-not-duplicated.service';
+import { AssertUserCanBeDeletedService } from '@/features/user/domain/services/assert-user-can-be-deleted.service';
+import { PatchUserRequest } from '@/features/user/dto/request/patch-user.request';
+import { PatchUserResponse } from '@/features/user/dto/response/patch-user.response';
 import { UserDto } from '@/features/user/dto/response/user.dto';
 import { UserRoleType } from '@/shared/constants/management.constant';
 import { hashPassword } from '@/shared/utils/password.util';
-import { PatchUserRequest } from '../../dto/request/patch-user.request';
-import { PatchUserResponse } from '../../dto/response/patch-user.response';
 
 @Injectable()
 export class UserCommandService {
   constructor(
-    private readonly createUserDomainService: CreateUserDomainService,
-    private readonly emailDuplicationCheckDomainService: EmailDuplicationCheckDomainService,
-    private readonly validateDeleteUserService: ValidateDeleteUserService,
+    private readonly provisionUserService: ProvisionUserService,
+    private readonly assertEmailNotDuplicatedService: AssertEmailNotDuplicatedService,
+    private readonly assertUserCanBeDeletedService: AssertUserCanBeDeletedService,
+    private readonly deprovisionUserService: DeprovisionUserService,
     private readonly eventPublisher: EventPublisher,
     @Inject(IUserRepositoryToken) private readonly userRepository: IUserRepository,
   ) {}
 
   public async createUser({
-    username,
+    name,
     email,
     role,
     password,
   }: {
-    username: string;
+    name: string;
     email: string;
     role: UserRoleType;
     password: string;
@@ -41,14 +42,14 @@ export class UserCommandService {
 
     const user = User.create({
       email: email,
-      name: username,
+      name: name,
       password: hashedPassword,
       role: role,
     });
 
-    await this.emailDuplicationCheckDomainService.execute(user.email);
+    await this.assertEmailNotDuplicatedService.execute(user.email);
 
-    await this.createUserDomainService.execute(user);
+    await this.provisionUserService.execute(user);
 
     const userContext = this.eventPublisher.mergeObjectContext(user);
     userContext.commit();
@@ -89,16 +90,16 @@ export class UserCommandService {
     return response;
   }
 
-  public async deleteUser(userId: string, loginUser: UserDto): Promise<void> {
+  public async deleteUser(userId: string, loginUser: UserDto): Promise<string> {
     const { user, version } = await this.userRepository.restoreAggregate(userId);
 
     if (userId === loginUser.id) {
-      throw new BadRequestException('ログイン中のユーザーは削除できません。');
+      throw new ForbiddenException('ログイン中のユーザーは削除できません。');
     }
 
-    await this.validateDeleteUserService.execute(user);
-    await this.userRepository.save(user, version);
+    await this.assertUserCanBeDeletedService.execute(user);
+    await this.deprovisionUserService.execute(user, version);
 
-    return;
+    return user.id;
   }
 }

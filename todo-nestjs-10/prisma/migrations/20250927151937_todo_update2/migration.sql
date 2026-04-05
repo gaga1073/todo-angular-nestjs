@@ -1,2 +1,0 @@
--- AlterTable
-ALTER TABLE "todos" ALTER COLUMN "due_date" SET DATA TYPE DATE;

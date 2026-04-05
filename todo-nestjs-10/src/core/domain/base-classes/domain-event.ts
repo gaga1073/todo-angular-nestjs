@@ -14,7 +14,7 @@ export abstract class DomainEvent<T> implements IEvent {
     payload: T,
     options: { correlationId?: string; version?: number } = {},
   ) {
-    this.eventId = ulid();
+    this.eventId = ulid().toLowerCase();
     this.name = name;
     this.timeStamp = new Date();
     this.payload = payload;

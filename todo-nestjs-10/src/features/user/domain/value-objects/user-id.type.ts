@@ -12,12 +12,12 @@ export const UserId = {
     return value;
   },
   newCreate: (): UserId => {
-    return ulid() as UserId;
+    return ulid().toLowerCase() as UserId;
   },
 };
 
 function validate(value: string): asserts value is UserId {
-  const Schema = z.string().regex(/^[0-7][0-9A-HJKMNP-TV-Z]{25}$/);
+  const Schema = z.string().regex(/^[0-7][0-9a-hjkmnp-tv-z]{25}$/);
   const result = Schema.safeParse(value);
 
   if (!result.success) {

@@ -16,7 +16,7 @@ async function bootstrap() {
       genReqId: (req: IncomingMessage) => {
         const existingId = req.headers['x-request-id'] as string | undefined;
         if (existingId) return existingId;
-        const id = ulid();
+        const id = ulid().toLowerCase();
         req.headers['x-request-id'] = id;
         return id;
       },

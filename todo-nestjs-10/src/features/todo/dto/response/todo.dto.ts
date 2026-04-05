@@ -4,7 +4,7 @@ import { Exclude, Expose, Type } from 'class-transformer';
 @Exclude()
 class Assignee {
   @Expose()
-  @ApiProperty({ example: '01HZYC2028WMB3NJ16WCV9Z9E0' })
+  @ApiProperty({ example: '01hzyc2028wmb3nj16wcv9z9e0' })
   id!: string;
 
   @Expose()
@@ -15,7 +15,7 @@ class Assignee {
 @Exclude()
 class createBy {
   @Expose()
-  @ApiProperty({ example: '01HZYC2028WMB3NJ16WCV9Z9E0' })
+  @ApiProperty({ example: '01hzyc2028wmb3nj16wcv9z9e0' })
   id!: string;
 
   @Expose()
@@ -26,12 +26,12 @@ class createBy {
 @Exclude()
 export class TodoDto {
   @Expose()
-  @ApiProperty({ example: '01K65P9N431A5XPB0YY5BESCWY' })
+  @ApiProperty({ example: '01k65p9n431a5xpb0yy5bescwy' })
   id!: string;
 
   @Expose()
-  @ApiProperty({ example: '01K4QDX4BJPRRFH23T3HWMQ7NC' })
-  workspaceId!: string;
+  @ApiProperty({ example: '01k4qdx4bjprrfh23t3hwmq7nc' })
+  projectId!: string;
 
   @Expose()
   @ApiProperty({ example: '作業' })
@@ -51,11 +51,11 @@ export class TodoDto {
 
   @Expose()
   @Type(() => Assignee)
-  @ApiProperty({ example: '01HZYC2028WMB3NJ16WCV9Z9E0' })
+  @ApiProperty({ example: '01hzyc2028wmb3nj16wcv9z9e0' })
   assignee!: Assignee;
 
   @Expose()
   @Type(() => createBy)
-  @ApiProperty({ example: '01HZYC2028WMB3NJ16WCV9Z9E0' })
+  @ApiProperty({ example: '01hzyc2028wmb3nj16wcv9z9e0' })
   createBy!: createBy;
 }

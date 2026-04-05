@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { TransactionHost } from '@nestjs-cls/transactional';
 import { TransactionalAdapterPrisma } from '@nestjs-cls/transactional-adapter-prisma';
-import { UserModel } from '@prisma/client';
 import { User } from '@/features/user/domain/entities/user';
 import { IUserRepository } from '@/features/user/domain/repositories/user-repository.interface';
 import { UserId } from '@/features/user/domain/value-objects/user-id.type';
@@ -37,6 +36,7 @@ export class UserRepository implements IUserRepository {
         isDeleted: row.isDeleted,
         isActive: row.isActive,
         createAt: row.createAt,
+        updateAt: row.updateAt,
       });
 
       return {
@@ -44,7 +44,9 @@ export class UserRepository implements IUserRepository {
         version: row.version,
       };
     } catch (error) {
-      this.appLogger.error('DataBase Error occured', error, { method: this.restoreAggregate.name });
+      this.appLogger.error('データベースエラーが発生しました。', error, {
+        method: this.restoreAggregate.name,
+      });
       return handlePrismaError(error);
     }
   }
@@ -60,12 +62,14 @@ export class UserRepository implements IUserRepository {
           isDeleted: user.isDeleted,
           isActive: user.isActive,
           password: user.password,
-          updateAt: new Date(),
-          createAt: new Date(),
+          createAt: user.createAt,
+          updateAt: user.updateAt,
         },
       });
     } catch (error) {
-      this.appLogger.error('DataBase Error occured', error, { method: this.create.name });
+      this.appLogger.error('データベースエラーが発生しました。', error, {
+        method: this.create.name,
+      });
       return handlePrismaError(error);
     }
   }
@@ -89,12 +93,12 @@ export class UserRepository implements IUserRepository {
         },
       });
     } catch (error) {
-      this.appLogger.error('DataBase Error occured', error, { method: this.save.name });
+      this.appLogger.error('データベースエラーが発生しました。', error, { method: this.save.name });
       return handlePrismaError(error);
     }
   }
 
-  public async findActiveUserByEmail(email: string): Promise<UserModel | null> {
+  public async existsActiveGroupByName(email: string): Promise<boolean> {
     try {
       const row = await this.prisma.tx.userModel.findFirst({
         where: {
@@ -102,16 +106,16 @@ export class UserRepository implements IUserRepository {
         },
       });
 
-      return row;
+      return row !== null;
     } catch (error) {
-      this.appLogger.error('DataBase Error occured', error, {
-        method: this.findActiveUserByEmail.name,
+      this.appLogger.error('データベースエラーが発生しました。', error, {
+        method: this.existsActiveGroupByName.name,
       });
       return handlePrismaError(error);
     }
   }
 
-  public async findById(userId: UserId): Promise<UserModel> {
+  public async existsDeletedUser(userId: UserId): Promise<boolean> {
     try {
       const row = await this.prisma.tx.userModel.findUniqueOrThrow({
         where: {
@@ -119,9 +123,11 @@ export class UserRepository implements IUserRepository {
         },
       });
 
-      return row;
+      return row !== null;
     } catch (error) {
-      this.appLogger.error('DataBase Error occured', error, { method: this.findById.name });
+      this.appLogger.error('データベースエラーが発生しました。', error, {
+        method: this.existsDeletedUser.name,
+      });
       return handlePrismaError(error);
     }
   }
